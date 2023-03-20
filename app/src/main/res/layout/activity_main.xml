@@ -114,7 +114,6 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="Weather Info Tabs"
                     android:layout_gravity="bottom"
-
                     app:tabIndicatorColor="@color/grey"
                     app:tabIndicatorFullWidth="false"
                     app:tabRippleColor="@color/white_80_brightness"
