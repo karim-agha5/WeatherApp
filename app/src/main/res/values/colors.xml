@@ -11,5 +11,7 @@
 
     <!-- Custom Colors -->
     <color name="white_98_brightness">#F7F7F7</color>
+    <color name="white_80_brightness">#CCCCCC</color>
+    <color name="grey">#808080</color>
 
 </resources>

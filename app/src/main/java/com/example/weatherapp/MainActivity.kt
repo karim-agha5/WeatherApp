@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadCollapsingToolbarImage(){
         Glide
             .with(this)
-            .load(ResourcesCompat.getDrawable(resources,R.drawable.flat_mountain_amthyst,theme))
+            .load(ResourcesCompat.getDrawable(resources,R.drawable.pxfuel,theme))
             .into(ivImage)
     }
 
