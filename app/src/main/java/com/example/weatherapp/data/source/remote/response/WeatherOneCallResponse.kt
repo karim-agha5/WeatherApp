@@ -15,11 +15,11 @@ data class WeatherOneCallResponse(
     val lat: Double,
     val lon: Double,
     val timezone: String,
-    @SerializedName("timezone_offset")
-    val timezoneOffset: Int,
+    //@SerializedName("timezone_offset")
+    //val timezoneOffset: Int,
     @SerializedName("current")
     val currentWeatherDetailedInfo: CurrentWeatherInfo,
-    val minutely: List<MinutelyWeatherInfo>,
+    //val minutely: List<MinutelyWeatherInfo>,
     @SerializedName("hourly")
     val twoDaysHourlyForecast: List<HourlyWeatherInfo>,
     @SerializedName("daily")
