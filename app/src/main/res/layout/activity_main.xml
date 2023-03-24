@@ -16,7 +16,7 @@
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MainActivity">
+            tools:context=".ui.MainActivity">
 
 
             <com.google.android.material.appbar.AppBarLayout
@@ -69,12 +69,11 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_medium"
                             android:text="@string/tv_weather_location"
-                            android:textSize="23sp"
                             android:textColor="@color/white_98_brightness"
-                            app:layout_constraintStart_toStartOf="parent"
+                            android:textSize="23sp"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/tv_weather_status" />
-
 
                         <TextView
                             android:id="@+id/tv_weather_degree"
@@ -97,7 +96,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         app:layout_collapseMode="pin"
-                        android:layout_marginTop="12dp" />
+                        android:layout_marginTop="16dp" />
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tab_layout"

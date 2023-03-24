@@ -3,6 +3,9 @@ package com.example.weatherapp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import com.example.weatherapp.ui.fragment.FirstFragment
+import com.example.weatherapp.ui.fragment.SecondFragment
+import com.example.weatherapp.ui.fragment.ThirdFragment
 
 class ViewPagerAdapter(fm: FragmentManager, behavior: Int) : FragmentStatePagerAdapter(fm,behavior) {
     override fun getCount(): Int = 3
