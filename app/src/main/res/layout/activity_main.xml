@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="viewmodel"
+            type="com.example.weatherapp.viewmodel.MainActivityViewModel" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -53,7 +55,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_bold"
-                            android:text="@string/tv_weather_status"
+                            android:text="@{viewmodel.weatherOneCallResponse.currentWeatherDetailedInfo.component7() .get(0).main}"
                             android:textSize="32sp"
                             android:textColor="@color/white_98_brightness"
                             android:includeFontPadding="false"
@@ -68,7 +70,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_medium"
-                            android:text="@string/tv_weather_location"
+                            android:text="@{viewmodel.weatherOneCallResponse.timezone}"
                             android:textColor="@color/white_98_brightness"
                             android:textSize="23sp"
                             app:layout_constraintEnd_toEndOf="parent"

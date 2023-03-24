@@ -7,25 +7,25 @@ import com.google.gson.annotations.SerializedName
 
 data class DailyWeatherInfo(
     val dt: Long,
-    val sunrise: Long,
-    val sunset: Long,
-    val moonrise: Long,
-    val moonset: Long,
+    //val sunrise: Long,
+    //val sunset: Long,
+    //val moonrise: Long,
+    //val moonset: Long,
     val temp: Temperature,
-    @SerializedName("feels_like")
-    val humanTemperature: HumanTemperature,
+    //@SerializedName("feels_like")
+    //val humanTemperature: HumanTemperature,
     val pressure: Int,
     val humidity: Int,
-    @SerializedName("dew_point")
-    val dewPoint: Float,
+    //@SerializedName("dew_point")
+    //val dewPoint: Float,
     @SerializedName("wind_speed")
     val windSpeed: Float,
-    @SerializedName("wind_deg")
-    val windDegree: Int,
+    //@SerializedName("wind_deg")
+    //val windDegree: Int,
     @SerializedName("weather")
     val weatherList: List<Weather>,
     val clouds: Int,
-    val pop: Float,
+    //val pop: Float,
     val rain: Float,
-    val uvi: Float
+    //val uvi: Float
 )

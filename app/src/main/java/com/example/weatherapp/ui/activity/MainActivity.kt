@@ -10,6 +10,8 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
@@ -19,6 +21,7 @@ import com.example.weatherapp.data.source.remote.response.HourlyForecastResponse
 import com.example.weatherapp.data.source.remote.service.RetrofitWeatherNetwork
 
 import com.example.weatherapp.databinding.ActivityMainBinding
+import com.example.weatherapp.viewmodel.MainActivityViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +32,7 @@ const val TAG: String = "Exception"
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mainActivityBinding: ActivityMainBinding
+    private lateinit var mainActivityBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,53 +46,25 @@ class MainActivity : AppCompatActivity() {
         mainActivityBinding.tvWeatherDegree.append("\u00B0");
 
 
-       /* val weatherService: WeatherService = RetrofitHelper.weatherService
-        lifecycleScope.launch(Dispatchers.IO) {
-            val hourlyForecastResponse: HourlyForecastResponse = weatherService.hourlyForecast(
-                "26.8206",
-               "30.8025",
-                apikey
-            )
-            Log.i(TAG, hourlyForecastResponse.city.country)
-        }*/
-
-       /* lifecycleScope.launch(Dispatchers.IO){
-            val currentWeather : CurrentWeatherResponse = weatherService.currentWeatherForecast(
-                "26.8206",
-                "30.8025",
-                apikey
-            )
-            Log.i(TAG, currentWeather.city.country)
-        }*/
-
 /*
-        lifecycleScope.launch(Dispatchers.IO){
-            val retrofit =
-                Retrofit
-                    .Builder()
-                    .baseUrl("https://api.openweathermap.org/data/2.5/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-
-            val weatherOneCall = retrofit.create(WeatherService::class.java)
-            val weatherOneCallResponse = weatherOneCall.weatherOneCall(
-                "26.8206",
-                "30.8025",
-                apikey
-            )
-
-            Log.i(
-                TAG, "${weatherOneCallResponse.dailyForecast.size} |" +
-                    " ${weatherOneCallResponse.twoDaysHourlyForecast.size}")
-
-        }*/
-
-
         val repo = WeatherRepository(Dispatchers.IO,RetrofitWeatherNetwork)
         lifecycleScope.launch(Dispatchers.Main){
             val response = repo.weatherOneCall("26.8206","30.8025")
             Log.i(TAG, "${response.currentWeatherDetailedInfo.temp}")
         }
+        */
+
+
+        val mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        mainActivityBinding.viewmodel = mainActivityViewModel
+
+        val weatherOneCallResponse = mainActivityViewModel.weatherOneCall("24.0889","32.8998")
+        weatherOneCallResponse.observe(this, Observer {
+            Log.i(TAG, "${it.timezone} | ${it.dailyForecast.size}")
+            mainActivityBinding.tvWeatherDegree.text = (it.currentWeatherDetailedInfo.temp - 273.15).toInt().toString() + "\u00B0"
+        })
+
+
     }
 
     private fun loadCollapsingToolbarImage(){

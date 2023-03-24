@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="collapsing_image_content_description">Background Image</string>
-    <string name="tv_weather_status">Snowy</string>
-    <string name="tv_weather_location">Vkhoyansk, Rusia</string>
-    <string name="tv_weather_degree">-12</string>
-    <string name="vp_content_description">Weather Info</string>
-    <string name="tl_content_description">Weather Info Tabs</string>
+    <string name="app_name" translatable="false">WeatherApp</string>
+    <string name="collapsing_image_content_description" translatable="false">Background Image</string>
+    <string name="tv_weather_status" translatable="false">Snowy</string>
+    <string name="tv_weather_location" translatable="false">Vkhoyansk, Rusia</string>
+    <string name="tv_weather_degree" translatable="false">-12</string>
+    <string name="vp_content_description" translatable="false">Weather Info</string>
+    <string name="tl_content_description" translatable="false">Weather Info Tabs</string>
+    <string name="favorites" translatable="false">Favorites</string>
+    <string name="settings" translatable="false">Settings</string>
 </resources>
