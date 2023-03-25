@@ -10,7 +10,7 @@ import com.example.weatherapp.data.source.remote.service.RetrofitWeatherNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel() : ViewModel(){
+class WeatherInfoViewModel() : ViewModel(){
 
     // Remove the WeatherRepository dependency and inject it later on
     private var weatherRepository = WeatherRepository(Dispatchers.IO,RetrofitWeatherNetwork)

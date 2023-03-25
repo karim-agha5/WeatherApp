@@ -39,8 +39,14 @@ private interface WeatherNetworkApi {
     suspend fun weatherOneCall(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
+        @Query("exclude") exclude: String = "minutely",
         @Query("appid") appid: String
     ) : WeatherOneCallResponse
+
+    // DailyForecast
+    suspend fun dailyForecast(
+
+    )
 }
 
 /**
@@ -65,7 +71,7 @@ object RetrofitWeatherNetwork : IWeatherRemoteDataSource{
     }
 
     override suspend fun weatherOneCall(lat: String, lon: String) : WeatherOneCallResponse{
-        return weatherNetworkApi.weatherOneCall(lat, lon, apikey)
+        return weatherNetworkApi.weatherOneCall(lat,lon, appid = apikey)
     }
 
     override suspend fun getCurrentWeather(): WeatherInfo {
