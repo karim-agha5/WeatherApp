@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.databinding.FragmentFirstBinding
@@ -45,11 +44,12 @@ class FirstFragment : Fragment() {
         * The Activity is responsible for providing the lat, lon of the location.
         * */
         weatherInfoViewModel.weatherOneCallResponse.observe(viewLifecycleOwner, Observer {
-            val list: MutableList<DailyWeatherInfo> = mutableListOf()
-            for(item in it.dailyForecast.indices){
+            var list: List<DailyWeatherInfo> = mutableListOf()
+            /*for(item in it.dailyForecast.indices){
                 if(item == 0) continue // skip first item, because it's the current weather forecast
                 list.add(it.dailyForecast[item])
-            }
+            }*/
+            list = it.dailyForecast
             adapter.submitList(list)
         })
     }

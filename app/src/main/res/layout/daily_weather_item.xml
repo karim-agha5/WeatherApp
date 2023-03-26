@@ -28,8 +28,39 @@
             android:textColor="@color/dark_grey"
             android:fontFamily="@font/noto_sans_sc_regular"
             android:includeFontPadding="false"
-            app:layout_constraintStart_toStartOf="parent"
+            android:paddingBottom="4dp"
+            app:layout_constraintStart_toEndOf="@id/iv_current_daily_weather_forecast_arrow"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <TextView
+            android:id="@+id/tv_daily_weather_item_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="26th March, 2023"
+            android:textSize="14sp"
+            android:textColor="@color/grey"
+            android:fontFamily="@font/noto_sans_sc_regular"
+            android:includeFontPadding="false"
+            app:layout_constraintStart_toStartOf="@id/tv_daily_weather_item_day"
+            app:layout_constraintTop_toBottomOf="@id/tv_daily_weather_item_day"/>
+
+
+
+
+        <ImageView
+            android:id="@+id/iv_current_daily_weather_forecast_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_arrow_right_24"
+            android:paddingRight="8dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="@id/tv_daily_weather_item_day"
+            app:layout_constraintBottom_toBottomOf="@id/tv_daily_weather_item_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_daily_weather_item_day"/>
+
 
 
 
@@ -42,6 +73,7 @@
             android:textColor="@color/dark_grey"
             android:fontFamily="@font/noto_sans_sc_regular"
             android:includeFontPadding="false"
+            android:paddingBottom="4dp"
             app:layout_constraintTop_toTopOf="@id/tv_daily_weather_item_day"
             app:layout_constraintBottom_toBottomOf="@id/tv_daily_weather_item_day"
             app:layout_constraintStart_toStartOf="@id/tv_daily_weather_item_status"
@@ -52,15 +84,14 @@
             android:id="@+id/tv_daily_weather_item_status"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            tools:text="Cloudy"
-            android:text="@{dailyWeatherInfo.component6().get(0).main}"
-            android:textSize="14sp"
-            android:textColor="@color/grey"
             android:fontFamily="@font/noto_sans_sc_regular"
             android:includeFontPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/tv_daily_weather_item_degree"
+            android:text="@{dailyWeatherInfo.component6().get(0).main}"
+            android:textColor="@color/grey"
+            android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@id/iv_daily_weather_item_icon"
-           />
+            app:layout_constraintTop_toBottomOf="@id/tv_daily_weather_item_degree"
+            tools:text="Cloudy" />
 
 
 
