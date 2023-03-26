@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
                     app:titleEnabled="false"
-                    app:contentScrim="@color/white_98_brightness"
+                    app:contentScrim="@color/white_97_brightness"
                     app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
 
@@ -58,7 +58,7 @@
                             android:fontFamily="@font/noto_sans_sc_bold"
                             android:text="@{viewmodel.weatherOneCallResponse.currentWeatherDetailedInfo.component7() .get(0).main}"
                             android:textSize="32sp"
-                            android:textColor="@color/white_98_brightness"
+                            android:textColor="@color/white_97_brightness"
                             android:includeFontPadding="false"
                             android:layout_marginTop="62dp"
                             app:layout_constraintStart_toStartOf="@id/tv_weather_location"
@@ -72,7 +72,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_medium"
                             android:text="@{viewmodel.weatherOneCallResponse.timezone}"
-                            android:textColor="@color/white_98_brightness"
+                            android:textColor="@color/white_97_brightness"
                             android:textSize="23sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
                             android:fontFamily="@font/rubik_bold"
                             android:text="@string/tv_weather_degree"
                             android:textSize="82sp"
-                            android:textColor="@color/white_98_brightness"
+                            android:textColor="@color/white_97_brightness"
                             app:layout_constraintStart_toStartOf="@id/tv_weather_location"
                             app:layout_constraintEnd_toEndOf="@id/tv_weather_location"
                             app:layout_constraintTop_toBottomOf="@id/tv_weather_location" />
