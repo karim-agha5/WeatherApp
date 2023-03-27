@@ -10,13 +10,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
-import com.example.weatherapp.databinding.FragmentFirstBinding
+import com.example.weatherapp.databinding.FragmentDailyForecastBinding
 import com.example.weatherapp.ui.adapter.DailyWeatherAdapter
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 
-class FirstFragment : Fragment() {
+class DailyForecastFragment : Fragment() {
 
-    private lateinit var binding: FragmentFirstBinding
+    private lateinit var binding: FragmentDailyForecastBinding
     private lateinit var weatherInfoViewModel: WeatherInfoViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,14 +28,14 @@ class FirstFragment : Fragment() {
     ): View? {
 
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_first,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_daily_forecast,container,false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         weatherInfoViewModel = ViewModelProvider(requireActivity()).get(WeatherInfoViewModel::class.java)
-        val adapter = DailyWeatherAdapter(requireContext())
+        val adapter = DailyWeatherAdapter()
         binding.dailyWeatherAdapter = adapter
 
         /*

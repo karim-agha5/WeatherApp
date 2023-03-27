@@ -1,26 +1,18 @@
 package com.example.weatherapp.ui.adapter
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.R
+import com.example.weatherapp.*
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.databinding.DailyWeatherItemBinding
-import com.example.weatherapp.getCDegreeFormat
-import com.example.weatherapp.getDisplayedDate
-import com.example.weatherapp.getWeekDay
-import java.util.*
 
-class DailyWeatherAdapter(
-    private var context: Context,
-) : ListAdapter<DailyWeatherInfo,DailyWeatherAdapter.CustomViewHolder>(DailyWeatherInfoDiffUtil()) {
+class DailyWeatherAdapter
+    : ListAdapter<DailyWeatherInfo,DailyWeatherAdapter.CustomViewHolder>(DailyWeatherInfoDiffUtil()) {
 
     class CustomViewHolder(var binding: DailyWeatherItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -42,7 +34,7 @@ class DailyWeatherAdapter(
     // Displays everything related to the date .
     // Day of the week, day of the month, month and current year
     private fun displayDate(holder: CustomViewHolder,position: Int){
-        val dt = holder.binding.dailyWeatherInfo?.dt?.times(1000)
+        val dt = holder.binding.dailyWeatherInfo?.dt?.times(fromSecondsToMillisConversionUnits)
         holder.binding.tvDailyWeatherItemDate.text = getDisplayedDate(dt ?: -1)
         if(position == 0){
             holder.binding.tvDailyWeatherItemDay.text = "Today"
@@ -68,5 +60,4 @@ private class DailyWeatherInfoDiffUtil : DiffUtil.ItemCallback<DailyWeatherInfo>
     override fun areContentsTheSame(oldItem: DailyWeatherInfo, newItem: DailyWeatherInfo): Boolean {
         return oldItem == newItem
     }
-
 }
