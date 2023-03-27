@@ -7,4 +7,5 @@
     <string name="pressure">الضغط الجوي</string>
     <string name="wind_speed">سرعة الرياح</string>
     <string name="clouds">الغيوم</string>
+    <string name="add_a_location">اضف موقع</string>
 </resources>

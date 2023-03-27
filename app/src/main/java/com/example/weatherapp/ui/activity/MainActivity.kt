@@ -1,9 +1,15 @@
 package com.example.weatherapp.ui.activity
 
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
@@ -17,6 +23,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 
 import com.example.weatherapp.databinding.ActivityMainBinding
+import com.example.weatherapp.helper.ConnectionManager
 import com.example.weatherapp.viewmodel.SelectedWeatherInfoViewModel
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 import java.util.*
@@ -26,38 +33,129 @@ const val TAG: String = "Exception"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mainActivityBinding: ActivityMainBinding
+    /*private val connectionManager: ConnectionManager by lazy {
+         ConnectionManager(this)
+    }*/
+
+    private val connectivityManager by lazy {
+        this.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+    }
+
+    private val weatherInfoViewModel: WeatherInfoViewModel by lazy{
+         ViewModelProvider(this).get(WeatherInfoViewModel::class.java)
+    }
+
+    private val egLat: String by lazy{"24.0889"}
+    private val egLon: String by lazy{"32.8998"}
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Set the status bar to be transparent
         WindowCompat.setDecorFitsSystemWindows(window,false)
 
+        setupNetworkCheck()
         initMainActivityBinding()
         loadCollapsingToolbarImage()
         setupSupportActionBar()
         setUpTabLayoutFunctionality()
         mainActivityBinding.tvWeatherDegree.append("\u00B0");
 
-
-
-        val weatherInfoViewModel = ViewModelProvider(this).get(WeatherInfoViewModel::class.java)
-        val selectedWeatherInfoViewModel = ViewModelProvider(this).get(SelectedWeatherInfoViewModel::class.java)
         mainActivityBinding.viewmodel = weatherInfoViewModel
 
-        val egLat = "24.0889"
-        val egLon = "32.8998"
 
-        val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
-        weatherOneCallResponse.observe(this, Observer {
-            mainActivityBinding.tvWeatherDegree.text = (it.currentWeatherDetailedInfo.temp - 273.15).toInt().toString() + "\u00B0"
-            // Set the selected weather to today's weather info so it can be displayed in the details fragment
-            mainActivityBinding.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
-            val calendar = Calendar.getInstance()
-            calendar.time = Date(it.twoDaysHourlyForecast[0].dt)
-            mainActivityBinding.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
-        })
+        if (isConnected()){
+            fetchInitialData()
+        }
+        else{
+            startActivity(Intent(this,ErrorActivity::class.java))
+            finish()
+        }
 
 
+    }
+
+
+    private fun fetchInitialData(){
+        // Run it on the UI thread because it's not possible to observe on a background thread.
+        runOnUiThread {
+            val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
+            weatherOneCallResponse.observe(this, Observer {
+                mainActivityBinding.tvWeatherDegree.text = (it.currentWeatherDetailedInfo.temp - 273.15).toInt().toString() + "\u00B0"
+                // Set the selected weather to today's weather info so it can be displayed in the details fragment
+                mainActivityBinding.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
+                val calendar = Calendar.getInstance()
+                calendar.time = Date(it.twoDaysHourlyForecast[0].dt)
+                mainActivityBinding.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
+            })
+        }
+    }
+
+    private fun onNetworkStatus(status: Boolean){
+        // onAvailable
+        if(status){
+            fetchInitialData()
+        }
+        // onLost
+        else{
+            startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
+            finish()
+        }
+
+    }
+
+    private fun setupNetworkCheck(){
+
+        val networkRequest =
+            NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                // .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build()
+
+
+
+
+        val networkCallback = object : ConnectivityManager.NetworkCallback(){
+
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                //Toast.makeText(this@MainActivity, "Available", Toast.LENGTH_SHORT).show() // works
+                Log.i(TAG, "onAvailable() AVAILABLE!")
+                fetchInitialData()
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+               // Toast.makeText(this@MainActivity, "Lost Connection", Toast.LENGTH_SHORT).show() // works
+                Log.i(TAG, "onLost() LOST!!!!")
+                startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
+                finish()
+            }
+
+        }
+
+        connectivityManager.requestNetwork(networkRequest,networkCallback)
+
+
+        if(isConnected()){
+            Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
+            Log.i(TAG, "isConnected(): CONNECTED")
+        }
+        else{
+            Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
+            Log.i(TAG, "isConnected(): DISCONNECTED")
+        }
+
+    }
+    private fun isConnected() : Boolean{
+        var connected = false
+        val info = connectivityManager.activeNetworkInfo
+        connected = info != null && info.isAvailable && info.isConnected
+
+        return connected
     }
 
     private fun loadCollapsingToolbarImage(){

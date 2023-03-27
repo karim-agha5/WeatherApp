@@ -137,7 +137,7 @@
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:menu="@menu/main_menu_items"
-            />
+            app:itemVerticalPadding="18dp" />
 
 
     </androidx.drawerlayout.widget.DrawerLayout>
