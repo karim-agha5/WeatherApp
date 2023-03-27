@@ -12,11 +12,13 @@
         android:id="@+id/favorite_locations"
         android:enabled="true"
         android:title="@string/favorites"
-        android:icon="@drawable/baseline_favorite_24"/>
+        android:icon="@drawable/baseline_favorite_24"
+        android:iconTint="#747574"/>
 
     <item
         android:id="@+id/settings"
         android:enabled="true"
         android:title="@string/settings"
-        android:icon="@drawable/baseline_settings_24"/>
+        android:icon="@drawable/baseline_settings_24"
+        android:iconTint="#747574"/>
 </menu>
