@@ -3,4 +3,8 @@
     <string name="app_name">تطبيق الطقس</string>
     <string name="favorites">المفضلة</string>
     <string name="settings">الاعدادات</string>
+    <string name="humidity">الرطوبه</string>
+    <string name="pressure">الضغط الجوي</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="clouds">الغيوم</string>
 </resources>

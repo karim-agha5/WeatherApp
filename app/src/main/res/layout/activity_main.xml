@@ -136,7 +136,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
-            app:menu="@menu/main_menu_items" />
+            app:menu="@menu/main_menu_items"
+            />
 
 
     </androidx.drawerlayout.widget.DrawerLayout>

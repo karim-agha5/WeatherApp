@@ -4,7 +4,6 @@ import com.example.weatherapp.data.source.remote.response.current.CurrentWeather
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.data.source.remote.response.dataclass.Alert
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
-import com.example.weatherapp.data.source.remote.response.minutely.MinutelyWeatherInfo
 import com.google.gson.annotations.SerializedName
 
 /**

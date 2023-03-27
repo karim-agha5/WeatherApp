@@ -8,4 +8,8 @@
     <string name="tl_content_description" translatable="false">Weather Info Tabs</string>
     <string name="favorites" translatable="false">Favorites</string>
     <string name="settings" translatable="false">Settings</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="clouds">Clouds</string>
 </resources>

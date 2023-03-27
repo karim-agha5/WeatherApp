@@ -14,10 +14,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
-import com.example.weatherapp.ViewPagerAdapter
+import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 
 import com.example.weatherapp.databinding.ActivityMainBinding
+import com.example.weatherapp.viewmodel.SelectedWeatherInfoViewModel
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
+import java.util.*
 
 const val TAG: String = "Exception"
 
@@ -39,15 +41,20 @@ class MainActivity : AppCompatActivity() {
 
 
         val weatherInfoViewModel = ViewModelProvider(this).get(WeatherInfoViewModel::class.java)
+        val selectedWeatherInfoViewModel = ViewModelProvider(this).get(SelectedWeatherInfoViewModel::class.java)
         mainActivityBinding.viewmodel = weatherInfoViewModel
 
         val egLat = "24.0889"
         val egLon = "32.8998"
 
-
         val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
         weatherOneCallResponse.observe(this, Observer {
             mainActivityBinding.tvWeatherDegree.text = (it.currentWeatherDetailedInfo.temp - 273.15).toInt().toString() + "\u00B0"
+            // Set the selected weather to today's weather info so it can be displayed in the details fragment
+            mainActivityBinding.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
+            val calendar = Calendar.getInstance()
+            calendar.time = Date(it.twoDaysHourlyForecast[0].dt)
+            mainActivityBinding.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
         })
 
 

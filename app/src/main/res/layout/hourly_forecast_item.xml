@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="imageUrl"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="18dp"
+        android:layout_marginRight="16dp">
+
+        <ImageView
+            android:id="@+id/iv_hourly_weather_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            loadApiWeatherIcon="@{imageUrl}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tv_hourly_weather_degree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="17C"
+            android:textSize="18sp"
+            android:textColor="@color/dark_grey"
+            android:fontFamily="@font/noto_sans_sc_regular"
+            android:includeFontPadding="false"
+            android:paddingVertical="12dp"
+            app:layout_constraintTop_toBottomOf="@id/iv_hourly_weather_icon"
+            app:layout_constraintStart_toStartOf="@id/iv_hourly_weather_icon"
+            app:layout_constraintEnd_toEndOf="@id/iv_hourly_weather_icon"/>
+
+
+
+
+        <TextView
+            android:id="@+id/tv_hourly_weather_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="10AM"
+            android:textSize="14sp"
+            android:textColor="@color/grey"
+            android:fontFamily="@font/noto_sans_sc_regular"
+            android:includeFontPadding="false"
+            android:paddingVertical="12dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_hourly_weather_degree"
+            app:layout_constraintStart_toStartOf="@id/iv_hourly_weather_icon"
+            app:layout_constraintEnd_toEndOf="@id/iv_hourly_weather_icon"
+           />
+
+
+
+        <TextView
+            android:id="@+id/tv_hourly_weather_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Cloudy"
+            android:textSize="18sp"
+            android:textColor="@color/dark_grey"
+            android:fontFamily="@font/noto_sans_sc_regular"
+            android:includeFontPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/tv_hourly_weather_date"
+            app:layout_constraintStart_toStartOf="@id/iv_hourly_weather_icon"
+            app:layout_constraintEnd_toEndOf="@id/iv_hourly_weather_icon"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
