@@ -10,21 +10,19 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+
 import com.example.weatherapp.R
-import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 
 import com.example.weatherapp.databinding.ActivityMainBinding
-import com.example.weatherapp.helper.ConnectionManager
-import com.example.weatherapp.viewmodel.SelectedWeatherInfoViewModel
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 import java.util.*
 
@@ -32,7 +30,9 @@ const val TAG: String = "Exception"
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mainActivityBinding: ActivityMainBinding
+    lateinit var mainActivityBinding: ActivityMainBinding
+    private lateinit var navDrawerToggle: ActionBarDrawerToggle
+    private lateinit var appBarConfiguration: AppBarConfiguration
     /*private val connectionManager: ConnectionManager by lazy {
          ConnectionManager(this)
     }*/
@@ -55,18 +55,54 @@ class MainActivity : AppCompatActivity() {
         // Set the status bar to be transparent
         WindowCompat.setDecorFitsSystemWindows(window,false)
 
+
+
         setupNetworkCheck()
         initMainActivityBinding()
-        loadCollapsingToolbarImage()
-        setupSupportActionBar()
-        setUpTabLayoutFunctionality()
-        mainActivityBinding.tvWeatherDegree.append("\u00B0");
+    //    loadCollapsingToolbarImage()
+     //   setupSupportActionBar()
+      //  setUpTabLayoutFunctionality()
+ //       mainActivityBinding.tvWeatherDegree.append("\u00B0");
 
         mainActivityBinding.viewmodel = weatherInfoViewModel
+        Log.i(com.example.weatherapp.TAG, "MainActivity ${weatherInfoViewModel.hashCode()} ")
 
+
+        val navHostFragment: NavHostFragment
+        = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+
+        val navController: NavController = navHostFragment.navController
+/*
+        navDrawerToggle = ActionBarDrawerToggle(this,mainActivityBinding.drawerLayout,R.string.open,R.string.close)
+
+        mainActivityBinding.drawerLayout.addDrawerListener(navDrawerToggle)*/
+        /*navDrawerToggle.isDrawerIndicatorEnabled = true
+        navDrawerToggle.syncState()*/
+
+      /*  appBarConfiguration = AppBarConfiguration.Builder(R.layout.fragment_main)
+            .setOpenableLayout(mainActivityBinding.drawerLayout)
+            .build()*/
+
+
+
+
+
+
+//        NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration)
+      //  NavigationUI.setupWithNavController(mainActivityBinding.navigationView,navController)
+
+
+
+
+         /*val navHostFragment: NavHostFragment =
+             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+
+        val navController: NavController = navHostFragment.navController
+        NavigationUI.setupActionBarWithNavController(this,navController)
+*/
 
         if (isConnected()){
-            fetchInitialData()
+   //         fetchInitialData()
         }
         else{
             startActivity(Intent(this,ErrorActivity::class.java))
@@ -77,7 +113,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun fetchInitialData(){
+   /* private fun fetchInitialData(){
         // Run it on the UI thread because it's not possible to observe on a background thread.
         runOnUiThread {
             val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
@@ -90,12 +126,12 @@ class MainActivity : AppCompatActivity() {
                 mainActivityBinding.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
             })
         }
-    }
+    }*/
 
     private fun onNetworkStatus(status: Boolean){
         // onAvailable
         if(status){
-            fetchInitialData()
+        //    fetchInitialData()
         }
         // onLost
         else{
@@ -124,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                 super.onAvailable(network)
                 //Toast.makeText(this@MainActivity, "Available", Toast.LENGTH_SHORT).show() // works
                 Log.i(TAG, "onAvailable() AVAILABLE!")
-                fetchInitialData()
+             //   fetchInitialData()
             }
 
             override fun onLost(network: Network) {
@@ -158,12 +194,12 @@ class MainActivity : AppCompatActivity() {
         return connected
     }
 
-    private fun loadCollapsingToolbarImage(){
+  /*  private fun loadCollapsingToolbarImage(){
         Glide
             .with(this)
             .load(ResourcesCompat.getDrawable(resources, R.drawable.ice_snowy_landscape,theme))
             .into(mainActivityBinding.ivCollapsingImage)
-    }
+    }*/
 
     private fun initMainActivityBinding(){
         mainActivityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -173,7 +209,7 @@ class MainActivity : AppCompatActivity() {
     /*
     * Sets the custom toolbar as the Appbar along with its components
     * */
-    private fun setupSupportActionBar(){
+   /* private fun setupSupportActionBar(){
         setSupportActionBar(mainActivityBinding.toolbar)
         val supportActionBar = supportActionBar
         supportActionBar?.setHomeAsUpIndicator(R.drawable.round_menu_24)
@@ -181,14 +217,14 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
+    }*/
 
-    private fun setUpTabLayoutFunctionality(){
+   /* private fun setUpTabLayoutFunctionality(){
         mainActivityBinding.viewPager.adapter =
             ViewPagerAdapter(supportFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         mainActivityBinding.tabLayout.setupWithViewPager(mainActivityBinding.viewPager)
 
-    }
+    }*/
 
     /*
     * Handles the hamburger icon clicks
@@ -207,4 +243,7 @@ class MainActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
+
+
 }

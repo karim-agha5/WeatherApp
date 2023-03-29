@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
@@ -18,10 +19,8 @@ import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 class DetailsFragment : Fragment() {
 
     private lateinit var fragmentDetailsBinding: FragmentDetailsBinding
-    private val weatherInfoViewModel: WeatherInfoViewModel by lazy {
-        // Get the ViewModel instance associated with the host activity
-        ViewModelProvider(requireActivity()).get(WeatherInfoViewModel::class.java)
-   }
+    private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -76,5 +75,7 @@ class DetailsFragment : Fragment() {
         else{
 
         }
+
+        Log.i(TAG, "DetailsFragment ${weatherInfoViewModel.hashCode()} ")
     }
 }

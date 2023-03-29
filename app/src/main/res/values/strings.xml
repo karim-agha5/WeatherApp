@@ -13,4 +13,7 @@
     <string name="wind_speed">Wind Speed</string>
     <string name="clouds">Clouds</string>
     <string name="add_a_location">Add a Location</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="open" translatable="false">open</string>
+    <string name="close" translatable="false">close</string>
 </resources>
