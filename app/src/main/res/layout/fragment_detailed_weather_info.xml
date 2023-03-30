@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragment.DetailedWeatherInfoFragment"
+    android:padding="16dp"
+    android:background="@color/white_97_brightness">
+
+
+
+    <ImageView
+        android:id="@+id/iv_detailed_weather"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:src="@drawable/detailed_weather_flat_icon"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp"/>
+
+
+
+
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="See the details of every weather forecast"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/poppins_light"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/iv_detailed_weather"
+        android:layout_marginTop="58dp"
+        />
+
+
+
+
+
+    <Button
+        android:id="@+id/btn_onbaording_screen2_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins_light"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white_97_brightness"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.helper
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -9,6 +9,8 @@ const val KELVIN = 0
 const val CELSIUS = 1
 const val FAHRENHEIT = 2
 const val fromSecondsToMillisConversionUnits = 1000
+const val ONBOARDING_SHARED_PREFERENCE_NAME = "onBoarding"
+const val ONBOARDING_SHARED_PREFERENCE_KEY = "isOnBoardingFinished"
 const val TAG = "Exception"
 
 private  val days = arrayOf(

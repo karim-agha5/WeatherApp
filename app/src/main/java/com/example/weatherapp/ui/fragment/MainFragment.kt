@@ -8,24 +8,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
-import com.example.weatherapp.TAG
-import com.example.weatherapp.data.source.remote.response.dataclass.Main
+import com.example.weatherapp.helper.TAG
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.getCDegreeFormat
+import com.example.weatherapp.helper.getCDegreeFormat
 import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
-import java.util.*
 
 
 class MainFragment : Fragment() {

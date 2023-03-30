@@ -7,7 +7,8 @@ import com.example.weatherapp.ui.fragment.DailyForecastFragment
 import com.example.weatherapp.ui.fragment.DetailsFragment
 import com.example.weatherapp.ui.fragment.ThirdFragment
 
-class ViewPagerAdapter(fm: FragmentManager, behavior: Int) : FragmentStatePagerAdapter(fm,behavior) {
+class ViewPagerAdapter(
+    fm: FragmentManager, behavior: Int) : FragmentStatePagerAdapter(fm,behavior) {
 
     override fun getCount(): Int = 3
 

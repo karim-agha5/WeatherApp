@@ -24,7 +24,6 @@ import com.example.weatherapp.R
 
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
-import java.util.*
 
 const val TAG: String = "Exception"
 
@@ -64,14 +63,20 @@ class MainActivity : AppCompatActivity() {
       //  setUpTabLayoutFunctionality()
  //       mainActivityBinding.tvWeatherDegree.append("\u00B0");
 
+
+
+
+
+
         mainActivityBinding.viewmodel = weatherInfoViewModel
-        Log.i(com.example.weatherapp.TAG, "MainActivity ${weatherInfoViewModel.hashCode()} ")
+        Log.i(com.example.weatherapp.helper.TAG, "MainActivity ${weatherInfoViewModel.hashCode()} ")
 
 
         val navHostFragment: NavHostFragment
         = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
 
         val navController: NavController = navHostFragment.navController
+
 /*
         navDrawerToggle = ActionBarDrawerToggle(this,mainActivityBinding.drawerLayout,R.string.open,R.string.close)
 

@@ -8,11 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.weatherapp.*
 import com.example.weatherapp.databinding.FragmentDetailsBinding
+import com.example.weatherapp.helper.*
 import com.example.weatherapp.ui.adapter.HourlyForecastAdapter
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 

@@ -1,6 +1,5 @@
 package com.example.weatherapp.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -10,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.*
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
 import com.example.weatherapp.databinding.HourlyForecastItemBinding
+import com.example.weatherapp.helper.*
 
 class HourlyForecastAdapter
     : ListAdapter<HourlyWeatherInfo,HourlyForecastAdapter.CustomViewHolder>(HourlyForecastDiffUtil()) {
