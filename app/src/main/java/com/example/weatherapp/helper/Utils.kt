@@ -11,6 +11,8 @@ const val FAHRENHEIT = 2
 const val fromSecondsToMillisConversionUnits = 1000
 const val ONBOARDING_SHARED_PREFERENCE_NAME = "onBoarding"
 const val ONBOARDING_SHARED_PREFERENCE_KEY = "isOnBoardingFinished"
+const val INITIAL_USER_SETTINGS_SHARED_PREFERENCE_NAME = "userSettings"
+const val INITIAL_USER_SETTINGS_SHARED_PREFERENCE_KEY = "isInitialUserSettingsFinished"
 const val TAG = "Exception"
 
 private  val days = arrayOf(

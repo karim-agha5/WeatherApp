@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.activity
 
+import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
@@ -16,13 +17,14 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 
 import com.example.weatherapp.databinding.ActivityMainBinding
+import com.example.weatherapp.helper.INITIAL_USER_SETTINGS_SHARED_PREFERENCE_KEY
+import com.example.weatherapp.helper.INITIAL_USER_SETTINGS_SHARED_PREFERENCE_NAME
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 
 const val TAG: String = "Exception"
@@ -55,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window,false)
 
 
-
         setupNetworkCheck()
         initMainActivityBinding()
     //    loadCollapsingToolbarImage()
@@ -65,46 +66,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
-
         mainActivityBinding.viewmodel = weatherInfoViewModel
         Log.i(com.example.weatherapp.helper.TAG, "MainActivity ${weatherInfoViewModel.hashCode()} ")
 
 
-        val navHostFragment: NavHostFragment
-        = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
-
-        val navController: NavController = navHostFragment.navController
-
-/*
-        navDrawerToggle = ActionBarDrawerToggle(this,mainActivityBinding.drawerLayout,R.string.open,R.string.close)
-
-        mainActivityBinding.drawerLayout.addDrawerListener(navDrawerToggle)*/
-        /*navDrawerToggle.isDrawerIndicatorEnabled = true
-        navDrawerToggle.syncState()*/
-
-      /*  appBarConfiguration = AppBarConfiguration.Builder(R.layout.fragment_main)
-            .setOpenableLayout(mainActivityBinding.drawerLayout)
-            .build()*/
-
-
-
-
-
-
-//        NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration)
-      //  NavigationUI.setupWithNavController(mainActivityBinding.navigationView,navController)
-
-
-
-
-         /*val navHostFragment: NavHostFragment =
-             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
-
-        val navController: NavController = navHostFragment.navController
-        NavigationUI.setupActionBarWithNavController(this,navController)
-*/
 
         if (isConnected()){
    //         fetchInitialData()

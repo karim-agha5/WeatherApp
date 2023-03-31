@@ -64,10 +64,11 @@ favorite places and your loved one's."
         android:fontFamily="@font/poppins_light"
         android:textColor="@color/black"
         android:backgroundTint="@color/white_97_brightness"
-        android:elevation="8dp"
+        android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="10dp"/>
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

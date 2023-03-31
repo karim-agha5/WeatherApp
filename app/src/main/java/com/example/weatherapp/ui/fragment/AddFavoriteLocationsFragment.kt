@@ -1,18 +1,16 @@
 package com.example.weatherapp.ui.fragment
 
-import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
 import com.example.weatherapp.R
-import com.example.weatherapp.helper.ONBOARDING_SHARED_PREFERENCE_KEY
-import com.example.weatherapp.helper.ONBOARDING_SHARED_PREFERENCE_NAME
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
+import com.example.weatherapp.helper.TAG
 
 class AddFavoriteLocationsFragment : Fragment() {
 
@@ -34,18 +32,14 @@ class AddFavoriteLocationsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val btnNext: Button = view.findViewById(R.id.btn_onbaording_lets_get_started)
         btnNext.setOnClickListener {
-            // TODO go to initial settings screen
             findNavController().navigate(R.id.action_viewPagerFragment_to_initialUserSettingsFragment)
             onBoardingFinished()
         }
     }
 
     private fun onBoardingFinished(){
-        val sharedPreference =
-            requireActivity()
-                .getSharedPreferences(ONBOARDING_SHARED_PREFERENCE_NAME,Context.MODE_PRIVATE)
-        val editor = sharedPreference.edit()
-        editor.putBoolean(ONBOARDING_SHARED_PREFERENCE_KEY,true)
-        editor.commit()
+        val settingsManager = SettingsManager.getInstance(requireContext().applicationContext)
+        settingsManager.setOnBoardingFinished(true)
+        Log.i(TAG, "onBoardingFinished: ${settingsManager.hashCode()}")
     }
 }

@@ -1,15 +1,312 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragment.InitialUserSettingsFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+    </data>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="32sp"
-        android:text="@string/hello_blank_fragment" />
+        tools:context=".ui.fragment.InitialUserSettingsFragment"
+        android:background="@color/white_97_brightness"
+        android:padding="16dp">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <ImageView
+                android:id="@+id/iv_settings_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/settings"
+                android:contentDescription="Settings Icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                android:text="@string/user_initial_settings_title"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                app:layout_constraintTop_toBottomOf="@id/iv_settings_icon" />
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_explanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/poppins_light"
+                android:gravity="center"
+                android:text="@string/tv_user_initial_settings_explanation"
+                android:textColor="@color/dark_grey"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_initial_user_settings_title" />
+
+
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_explanation2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_light"
+                android:gravity="center"
+                android:text="Remember,you can always change them later."
+                android:textColor="@color/grey"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_initial_user_settings_explanation" />
+
+
+            <TextView
+                android:id="@+id/tv_location_initial_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/tv_user_initial_settings_location"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_initial_user_settings_explanation2"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="60dp" />
+
+
+            <RadioGroup
+                android:id="@+id/rg_user_initial_settings_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_location_initial_setting"
+                app:layout_constraintBottom_toBottomOf="@id/tv_location_initial_setting">
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_gps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gps"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="24dp"
+                    android:checked="true" />
+
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/map"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black" />
+
+            </RadioGroup>
+
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/temperature"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/tv_location_initial_setting"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="60dp" />
+
+
+            <RadioGroup
+                android:id="@+id/rg_user_initial_settings_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_initial_user_settings_temperature"
+                app:layout_constraintBottom_toBottomOf="@id/tv_initial_user_settings_temperature">
+
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_celsius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/celsius"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_kelvin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/kelvin"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black" />
+
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_fahrenheit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fahrenheit"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black" />
+
+            </RadioGroup>
+
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_wind_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wind_speed"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/tv_initial_user_settings_temperature"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="60dp" />
+
+
+            <RadioGroup
+                android:id="@+id/rg_user_initial_settings_wind_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_initial_user_settings_wind_speed"
+                app:layout_constraintBottom_toBottomOf="@id/tv_initial_user_settings_wind_speed">
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_meter_per_sec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/meter_per_sec"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="10dp"
+                    android:checked="true" />
+
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_miles_per_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/miles_per_hour"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black" />
+
+            </RadioGroup>
+
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/language"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/tv_initial_user_settings_wind_speed"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="60dp" />
+
+
+            <RadioGroup
+                android:id="@+id/rg_user_initial_settings_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_initial_user_settings_language"
+                app:layout_constraintBottom_toBottomOf="@id/tv_initial_user_settings_language">
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="10dp"
+                    android:checked="true" />
+
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_arabic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/arabic"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black" />
+
+            </RadioGroup>
+
+
+            <TextView
+                android:id="@+id/tv_initial_user_settings_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notifications"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/tv_initial_user_settings_language"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="60dp" />
+
+
+            <RadioGroup
+                android:id="@+id/rg_user_initial_settings_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_initial_user_settings_notifications"
+                app:layout_constraintBottom_toBottomOf="@id/tv_initial_user_settings_notifications">
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_enabled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enabled"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="10dp"
+                    android:checked="true" />
+
+
+                <RadioButton
+                    android:id="@+id/rb_initial_user_settings_disabled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/disabled"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black" />
+
+            </RadioGroup>
+
+
+            <Button
+                android:id="@+id/btn_initial_user_settings_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/done"
+                android:backgroundTint="#C20000"
+                app:layout_constraintTop_toBottomOf="@id/rg_user_initial_settings_notifications"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="12dp" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>
