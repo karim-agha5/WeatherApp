@@ -62,6 +62,7 @@ class NoLocationPermissionFragment : Fragment() {
 
     private fun onLocationPermissionGranted(){
         // pops self of the stack and navigates to the MainFragment
+        findNavController().popBackStack()
         findNavController().navigate(R.id.mainFragment)
     }
 

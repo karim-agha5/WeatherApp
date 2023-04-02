@@ -2,7 +2,6 @@ package com.example.weatherapp.ui.activity
 
 
 import android.Manifest
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.*
@@ -13,19 +12,14 @@ import android.view.MenuItem
 import android.view.View
 
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
@@ -67,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         val navHost: NavHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         navController = navHost.navController
+        navController.popBackStack()
         navController.navigate(R.id.noLocationPermissionFragment)
 
         setupLocationPermissionManager(mainActivityBinding.root)
@@ -299,5 +294,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*override fun onSupportNavigateUp(): Boolean {
+       return navController.navigateUp() || super.onSupportNavigateUp()
+    }*/
 
+    override fun onBackPressed() {
+        if(navController.popBackStack().not()){
+            finish()
+        }
+    }
 }
