@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.fragment.WeatherEverywhereFragment"
+    tools:context=".ui.fragment.initialsetup.WeatherEverywhereFragment"
     android:padding="16dp"
     android:background="@color/white_97_brightness">
 
@@ -58,9 +58,9 @@
         android:layout_height="wrap_content"
         android:text="Next"
         android:textSize="18sp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:fontFamily="@font/poppins_light"
-        android:backgroundTint="@color/white_97_brightness"
+        android:backgroundTint="@color/red_shade_3"
         android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

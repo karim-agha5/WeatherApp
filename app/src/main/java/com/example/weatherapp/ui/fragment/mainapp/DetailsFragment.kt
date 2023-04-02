@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
 import android.util.Log
@@ -10,8 +10,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.*
+import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
 import com.example.weatherapp.databinding.FragmentDetailsBinding
-import com.example.weatherapp.helper.*
+import com.example.weatherapp.util.*
 import com.example.weatherapp.ui.adapter.HourlyForecastAdapter
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 
@@ -32,12 +33,13 @@ class DetailsFragment : Fragment() {
         // Inflate the layout for this fragment
         fragmentDetailsBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_details,container,false)
         return fragmentDetailsBinding.root
-       // return inflater.inflate(R.layout.fragment_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        var adapter = HourlyForecastAdapter()
+        fragmentDetailsBinding.rvCurrentHourlyForecast.layoutManager =
+            LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
         /*
         * The reason we check for the nullability of the value of the exposed LiveData is that
         * the details fragment gets instantiated once the Host activity gets created.
@@ -57,24 +59,36 @@ class DetailsFragment : Fragment() {
 
         // If the data is already fetched.
         else{
-
+            fragmentDetailsBinding.tvHumidityValue.text = getHumidityUnit(weatherInfoViewModel?.selectedWeatherInfo?.value?.humidity ?: 0)
+            fragmentDetailsBinding.tvPressureValue.text = getPressureUnit(weatherInfoViewModel?.selectedWeatherInfo?.value?.pressure ?: 0)
+            fragmentDetailsBinding.tvWindSpeedValue.text = getWindSpeedUnit((weatherInfoViewModel?.selectedWeatherInfo?.value?.windSpeed ?: 0.0) as Float,true)
+            fragmentDetailsBinding.tvCloudsValue.text = getCloudsUnit(weatherInfoViewModel?.selectedWeatherInfo?.value?.clouds ?: 0)
         }
 
         // MAKE SURE TO SEND THE HOURLY FORECASTS AS WELL
         if(weatherInfoViewModel.selectedListOfWeatherHourlyInfo.value == null){
             weatherInfoViewModel.selectedListOfWeatherHourlyInfo.observe(viewLifecycleOwner){
-                fragmentDetailsBinding.rvCurrentHourlyForecast.layoutManager =
-                    LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
-                val adapter = HourlyForecastAdapter()
-                adapter.submitList(it)
+                val list: List<HourlyWeatherInfo> = getOneDayWeatherInfo(it)
+                adapter.submitList(list)
                 fragmentDetailsBinding.rvCurrentHourlyForecast.adapter = adapter
             }
         }
 
         else{
-
+            val list: List<HourlyWeatherInfo> =
+                getOneDayWeatherInfo(weatherInfoViewModel?.selectedListOfWeatherHourlyInfo?.value ?: listOf())
+            adapter.submitList(list)
+            fragmentDetailsBinding.hourlyForecastAdapter = adapter
+            adapter.notifyDataSetChanged() // TODO probably unneccessary
         }
 
-        Log.i(TAG, "DetailsFragment ${weatherInfoViewModel.hashCode()} ")
+    }
+
+    private fun getOneDayWeatherInfo(list: List<HourlyWeatherInfo>) : List<HourlyWeatherInfo>{
+        val resultList: MutableList<HourlyWeatherInfo> = mutableListOf()
+        for(i in 0 .. 24){
+            resultList.add(list[i])
+        }
+        return resultList.toList()
     }
 }

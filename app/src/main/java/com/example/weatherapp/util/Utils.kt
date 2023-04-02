@@ -1,4 +1,4 @@
-package com.example.weatherapp.helper
+package com.example.weatherapp.util
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -13,6 +13,7 @@ const val ONBOARDING_SHARED_PREFERENCE_NAME = "onBoarding"
 const val ONBOARDING_SHARED_PREFERENCE_KEY = "isOnBoardingFinished"
 const val INITIAL_USER_SETTINGS_SHARED_PREFERENCE_NAME = "userSettings"
 const val INITIAL_USER_SETTINGS_SHARED_PREFERENCE_KEY = "isInitialUserSettingsFinished"
+const val LOCATION_PERMISSION_GRANTED_REQUEST_CODE = 5
 const val TAG = "Exception"
 
 private  val days = arrayOf(

@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.initialsetup
 
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
-import com.example.weatherapp.helper.TAG
+import com.example.weatherapp.util.TAG
 import com.example.weatherapp.ui.activity.SplashScreenActivity
 
 
@@ -51,13 +51,13 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun isOnBoardingFinished(): Boolean {
-        Log.i(TAG, "splash fragment: ${settingsManager.hashCode()}")
+     //   Log.i(TAG, "splash fragment: ${settingsManager.hashCode()}")
         return settingsManager.isOnBoardingFinished()
     }
 
 
     private fun isInitialUserSettingsFinished(): Boolean {
-        Log.i(TAG, "splash fragment: ${settingsManager.hashCode()}")
+       // Log.i(TAG, "splash fragment: ${settingsManager.hashCode()}")
         return settingsManager.isInitialUserSettingsFinished()
     }
 }

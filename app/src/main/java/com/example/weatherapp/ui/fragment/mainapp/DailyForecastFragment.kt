@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -49,6 +49,7 @@ class DailyForecastFragment : Fragment() {
                 if(item == 0) continue // skip first item, because it's the current weather forecast
                 list.add(it.dailyForecast[item])
             }*/
+
             list = it.dailyForecast
             adapter.submitList(list)
         })

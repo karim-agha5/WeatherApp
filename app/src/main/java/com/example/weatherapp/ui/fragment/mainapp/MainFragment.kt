@@ -1,5 +1,7 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.mainapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -15,11 +18,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
-import com.example.weatherapp.helper.TAG
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
+import com.example.weatherapp.util.TAG
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.helper.getCDegreeFormat
+import com.example.weatherapp.util.getCDegreeFormat
 import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
+import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
+import com.example.weatherapp.util.LocationPermissionManager
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 
 
@@ -27,11 +33,23 @@ class MainFragment : Fragment() {
 
     private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
+    private lateinit var locationPermissionManager: LocationPermissionManager
+    private val settingsManager by lazy {
+        SettingsManager.getInstance(requireContext())
+    }
     private val egLat: String by lazy{"24.0889"}
     private val egLon: String by lazy{"32.8998"}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /*if(settingsManager.isUserSettingsLocationSetToGps()){
+            if(ActivityCompat.checkSelfPermission(requireActivity(),Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+                findNavController().navigate(R.id.action_mainFragment_to_noLocationPermissionFragment2)
+            }
+        }*/
+
+
     }
 
     override fun onCreateView(
@@ -47,15 +65,34 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = weatherInfoViewModel
         loadCollapsingToolbarImage()
-        //setupSupportActionBar()
+        locationPermissionManager = setupLocationPermissionManager(view)
+       // locationPermissionManager.requestLocationPermission()
+            if (ActivityCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                fetchInitialData()
+            }
 
         setUpTabLayoutFunctionality()
         setupNavigationConfig()
-        fetchInitialData()
-        Log.i(TAG, "MainFragment ${weatherInfoViewModel.hashCode()} ")
+
 
     }
 
+
+    private fun setupLocationPermissionManager(view: View) : LocationPermissionManager{
+        return LocationPermissionManager(
+                requireActivity(),
+                view,
+                this::onLocationPermissionGranted,
+                this::onLocationPermissionDenied,
+                this::onGoToSettingsClick,
+                LOCATION_PERMISSION_GRANTED_REQUEST_CODE
+            )
+    }
 
     private fun setupNavigationConfig(){
         val appBarConfiguration =
@@ -65,9 +102,6 @@ class MainFragment : Fragment() {
         * This should transform the hamburger icon to the back button
         * if a non top-level destination is on top of the stack
         * */
-      //  NavigationUI.setupActionBarWithNavController(activity as MainActivity,findNavController(),appBarConfiguration)
-     //   (activity as MainActivity).setupActionBarWithNavController(findNavController(),appBarConfiguration)
-
         binding.toolbar.setupWithNavController(findNavController(),appBarConfiguration)
 
         // Adds another Hamburger icon because the default one is black and it's not fully visible to the eye
@@ -79,11 +113,10 @@ class MainFragment : Fragment() {
         * */
         (activity as MainActivity).mainActivityBinding.navigationView.setupWithNavController(findNavController())
 
-        // Adds another Hamburger icon because the default one is black and it's not fully visible to the eye
-       // (activity as MainActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.round_menu_24)
     }
 
     private fun fetchInitialData(){
+        Log.i(TAG, "fetching data.... ")
         // Run it on the UI thread because it's not possible to observe on a background thread.
         requireActivity().runOnUiThread {
             val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
@@ -120,8 +153,10 @@ class MainFragment : Fragment() {
     }
 
     private fun setUpTabLayoutFunctionality(){
+       /* binding.viewPager.adapter =
+            ViewPagerAdapter(requireActivity().supportFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)*/
         binding.viewPager.adapter =
-            ViewPagerAdapter(requireActivity().supportFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+            ViewPagerAdapter(childFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         binding.tabLayout.setupWithViewPager(binding.viewPager)
 
     }
@@ -130,5 +165,17 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val navController = findNavController()
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onLocationPermissionGranted(){
+        fetchInitialData()
+    }
+
+    private fun onLocationPermissionDenied(){
+        findNavController().navigate(R.id.noLocationPermissionFragment)
+    }
+
+    private fun onGoToSettingsClick(){
+        // Not really needed
     }
 }

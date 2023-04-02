@@ -1,9 +1,7 @@
-package com.example.weatherapp.helper
+package com.example.weatherapp.util
 
 import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import com.example.weatherapp.R
 

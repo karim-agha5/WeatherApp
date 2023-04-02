@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.initialsetup
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.databinding.FragmentInitialUserSettingsBinding
-import com.example.weatherapp.helper.TAG
+import com.example.weatherapp.util.TAG
 
 /*
 TODO Should probably delegate all the save operations to whatever storage to the OnDoneButtonClickListener
@@ -39,7 +39,6 @@ class InitialUserSettingsFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_initial_user_settings,container,false)
         return binding.root
-        //return inflater.inflate(R.layout.fragment_initial_user_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,7 +57,7 @@ class InitialUserSettingsFragment : Fragment() {
         saveSelectedWindSpeedRadioButton(view)
         saveSelectedLanguageRadioButton(view)
         saveSelectedNotificationsSettingRadioButton(view)
-        Log.i(TAG, "initial settings fragment: ${settingsManager.hashCode()}")
+     //   Log.i(TAG, "initial settings fragment: ${settingsManager.hashCode()}")
     }
 
     private fun setInitialUserSettingsFinished(){

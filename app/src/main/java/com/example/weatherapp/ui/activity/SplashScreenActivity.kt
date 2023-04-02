@@ -7,10 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.view.WindowCompat
 import com.example.weatherapp.R
-import com.example.weatherapp.helper.CustomProgressDialog
-import com.example.weatherapp.ui.fragment.InitialUserSettingsFragment
+import com.example.weatherapp.ui.fragment.initialsetup.InitialUserSettingsFragment
 
-class SplashScreenActivity : AppCompatActivity(),InitialUserSettingsFragment.OnDoneButtonClickListener {
+class SplashScreenActivity : AppCompatActivity(), InitialUserSettingsFragment.OnDoneButtonClickListener {
 
     private lateinit var customProgressDialog: Dialog
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,13 +20,13 @@ class SplashScreenActivity : AppCompatActivity(),InitialUserSettingsFragment.OnD
      fun startMainActivity(){
          startActivity(Intent(this,MainActivity::class.java),
             ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
-         customProgressDialog.dismiss()
+     //    customProgressDialog.dismiss()
          finish()
     }
 
     override fun onClick() {
-        customProgressDialog = CustomProgressDialog.showProgressDialog(this)
-        customProgressDialog.show()
+      //  customProgressDialog = CustomProgressDialog.showProgressDialog(this)
+      //  customProgressDialog.show()
         startMainActivity()
     }
 }

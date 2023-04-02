@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +12,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.ui.activity.MainActivity
 
-class SettingsFragment : Fragment() {
+
+class FavoriteFragment : Fragment() {
 
     private lateinit var toolbar: Toolbar
 
@@ -26,14 +27,15 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        return inflater.inflate(R.layout.fragment_favorite, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar = view.findViewById(R.id.settings_fragment_toolbar)
+        toolbar = view.findViewById(R.id.favorite_fragment_toolbar)
         setupNavigationConfig()
     }
+
 
     private fun setupNavigationConfig(){
         val appBarConfiguration =
@@ -51,6 +53,6 @@ class SettingsFragment : Fragment() {
         * through the menu items
         * */
         (activity as MainActivity).mainActivityBinding.navigationView.setupWithNavController(findNavController())
-
     }
+
 }

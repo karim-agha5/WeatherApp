@@ -4,7 +4,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.fragment.ViewPagerFragment">
+        tools:context=".ui.fragment.initialsetup.ViewPagerFragment">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/onBoardingViewPager"

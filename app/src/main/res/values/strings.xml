@@ -16,8 +16,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="open" translatable="false">open</string>
     <string name="close" translatable="false">close</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="tv_user_initial_settings_explanation">The following extra few steps are needed to setup the app correctly. \nRemember, you can always change them later.</string>
     <string name="user_initial_settings_title">Just a few more steps...</string>
     <string name="tv_user_initial_settings_location">Location</string>
@@ -36,4 +35,6 @@
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
     <string name="done">Done</string>
+    <string name="unable_to_find_location_error_message">Unable to find your location</string>
+    <string name="retry">Retry</string>
 </resources>

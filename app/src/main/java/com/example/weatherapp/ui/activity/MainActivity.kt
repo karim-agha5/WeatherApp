@@ -1,43 +1,45 @@
 package com.example.weatherapp.ui.activity
 
-import android.content.Context
+
+import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.PackageManager
+import android.net.*
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-
 import com.example.weatherapp.R
-import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
-
 import com.example.weatherapp.databinding.ActivityMainBinding
-import com.example.weatherapp.helper.INITIAL_USER_SETTINGS_SHARED_PREFERENCE_KEY
-import com.example.weatherapp.helper.INITIAL_USER_SETTINGS_SHARED_PREFERENCE_NAME
+import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
+import com.example.weatherapp.util.LocationPermissionManager
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
+
 
 const val TAG: String = "Exception"
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mainActivityBinding: ActivityMainBinding
-    private lateinit var navDrawerToggle: ActionBarDrawerToggle
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    /*private val connectionManager: ConnectionManager by lazy {
-         ConnectionManager(this)
-    }*/
+    private lateinit var locationPermissionManager: LocationPermissionManager
 
+    lateinit var mainActivityBinding: ActivityMainBinding
     private val connectivityManager by lazy {
         this.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
     }
@@ -45,6 +47,9 @@ class MainActivity : AppCompatActivity() {
     private val weatherInfoViewModel: WeatherInfoViewModel by lazy{
          ViewModelProvider(this).get(WeatherInfoViewModel::class.java)
     }
+
+    private lateinit var navController: NavController
+
 
     private val egLat: String by lazy{"24.0889"}
     private val egLon: String by lazy{"32.8998"}
@@ -59,20 +64,18 @@ class MainActivity : AppCompatActivity() {
 
         setupNetworkCheck()
         initMainActivityBinding()
-    //    loadCollapsingToolbarImage()
-     //   setupSupportActionBar()
-      //  setUpTabLayoutFunctionality()
- //       mainActivityBinding.tvWeatherDegree.append("\u00B0");
+        val navHost: NavHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+        navController = navHost.navController
+        navController.navigate(R.id.noLocationPermissionFragment)
 
-
+        setupLocationPermissionManager(mainActivityBinding.root)
 
         mainActivityBinding.viewmodel = weatherInfoViewModel
-        Log.i(com.example.weatherapp.helper.TAG, "MainActivity ${weatherInfoViewModel.hashCode()} ")
-
 
 
         if (isConnected()){
-   //         fetchInitialData()
+
         }
         else{
             startActivity(Intent(this,ErrorActivity::class.java))
@@ -81,6 +84,45 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+
+
+
+    private fun setupLocationPermissionManager(view: View){
+        locationPermissionManager =
+            LocationPermissionManager(
+                this,
+                view,
+                this::onLocationPermissionGranted,
+                this::onLocationPermissionDismissed,
+                this::onGotoAppSettingsClick,
+                LOCATION_PERMISSION_GRANTED_REQUEST_CODE
+            )
+       // locationPermissionManager.requestLocationPermission()
+    }
+
+    private fun onLocationPermissionGranted(){
+        navController.popBackStack()
+        navController.navigate(R.id.mainFragment)
+    }
+
+    private fun onLocationPermissionDismissed(){
+        // Do nothing and stay as you are in NoLocationPermissionFragment
+        Toast.makeText(this, "NOT GRANTED", Toast.LENGTH_SHORT).show()
+      //  navController.navigate(R.id.noLocationPermissionFragment)
+    }
+
+    private fun onGotoAppSettingsClick(){
+        startActivity( Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package",this.packageName,this.toString())
+        )
+        )
+    }
+
+
+
+
 
 
    /* private fun fetchInitialData(){
@@ -129,14 +171,14 @@ class MainActivity : AppCompatActivity() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 //Toast.makeText(this@MainActivity, "Available", Toast.LENGTH_SHORT).show() // works
-                Log.i(TAG, "onAvailable() AVAILABLE!")
+              //  Log.i(TAG, "onAvailable() AVAILABLE!")
              //   fetchInitialData()
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
                // Toast.makeText(this@MainActivity, "Lost Connection", Toast.LENGTH_SHORT).show() // works
-                Log.i(TAG, "onLost() LOST!!!!")
+            //    Log.i(TAG, "onLost() LOST!!!!")
                 startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
                 finish()
             }
@@ -148,11 +190,11 @@ class MainActivity : AppCompatActivity() {
 
         if(isConnected()){
             Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
-            Log.i(TAG, "isConnected(): CONNECTED")
+        //    Log.i(TAG, "isConnected(): CONNECTED")
         }
         else{
             Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
-            Log.i(TAG, "isConnected(): DISCONNECTED")
+          //  Log.i(TAG, "isConnected(): DISCONNECTED")
         }
 
     }
@@ -214,6 +256,48 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == LOCATION_PERMISSION_GRANTED_REQUEST_CODE){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                // handled by NoLocationPermissionFragment
+              //  navController.navigate(R.id.mainFragment)
+                Log.i(TAG, "MainActivity. onRequestPermissionResult() called." +
+                        "Permission granted. Should navigate now")
+                navController.popBackStack()
+                navController.navigate(R.id.mainFragment)
+            }
+            else{
+                /*locationPermissionManager
+                    .onPermissionResult(
+                        false,
+                        null,
+                        this::onLocationPermissionDismissed
+                    )
+                Log.i(TAG, "MainActivity. onRequestPermissionResult() called." +
+                        "Permission denied. dismissed action should be called.")*/
+                // The user checked "never ask again"
+                if(!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                    AlertDialog
+                        .Builder(this)
+                        .setTitle("Permission Denied")
+                        .setMessage("This time, you will have to enable " +
+                                "the location permission in your phone's settings.")
+                        .setPositiveButton("Settings") { _, _ -> onGotoAppSettingsClick() }
+                        .setNegativeButton("Not Now"){_,_-> /*Do Nothing*/}
+                        .setCancelable(true)
+                        .show()
+
+
+                }
+            }
+        }
+    }
 
 
 }

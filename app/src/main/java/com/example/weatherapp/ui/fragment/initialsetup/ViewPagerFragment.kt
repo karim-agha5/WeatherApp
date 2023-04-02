@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.initialsetup
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +9,9 @@ import androidx.databinding.DataBindingUtil
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentViewPagerBinding
 import com.example.weatherapp.ui.adapter.OnBoardingViewPagerAdapter
+import com.example.weatherapp.ui.fragment.initialsetup.AddFavoriteLocationsFragment
+import com.example.weatherapp.ui.fragment.initialsetup.DetailedWeatherInfoFragment
+import com.example.weatherapp.ui.fragment.initialsetup.WeatherEverywhereFragment
 
 class ViewPagerFragment : Fragment() {
 

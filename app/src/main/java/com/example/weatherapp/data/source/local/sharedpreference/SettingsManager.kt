@@ -2,7 +2,7 @@ package com.example.weatherapp.data.source.local.sharedpreference
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.weatherapp.helper.*
+import com.example.weatherapp.util.*
 
 /**
  * Manages the global app settings, such as: whether the OnBoarding should be displayed or not,

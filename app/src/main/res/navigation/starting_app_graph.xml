@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="com.example.weatherapp.ui.fragment.SplashScreenFragment"
+        android:name="com.example.weatherapp.ui.fragment.initialsetup.SplashScreenFragment"
         android:label="fragment_splash_screen"
         tools:layout="@layout/fragment_splash_screen" >
         <action
@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewPagerFragment"
-        android:name="com.example.weatherapp.ui.fragment.ViewPagerFragment"
+        android:name="com.example.weatherapp.ui.fragment.initialsetup.ViewPagerFragment"
         android:label="fragment_view_pager"
         tools:layout="@layout/fragment_view_pager" >
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/initialUserSettingsFragment"
-        android:name="com.example.weatherapp.ui.fragment.InitialUserSettingsFragment"
+        android:name="com.example.weatherapp.ui.fragment.initialsetup.InitialUserSettingsFragment"
         android:label="fragment_initial_user_settings"
         tools:layout="@layout/fragment_initial_user_settings" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.initialsetup
 
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,7 @@ import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
-import com.example.weatherapp.helper.TAG
+import com.example.weatherapp.util.TAG
 
 class AddFavoriteLocationsFragment : Fragment() {
 
@@ -40,6 +40,6 @@ class AddFavoriteLocationsFragment : Fragment() {
     private fun onBoardingFinished(){
         val settingsManager = SettingsManager.getInstance(requireContext().applicationContext)
         settingsManager.setOnBoardingFinished(true)
-        Log.i(TAG, "onBoardingFinished: ${settingsManager.hashCode()}")
+    //    Log.i(TAG, "onBoardingFinished: ${settingsManager.hashCode()}")
     }
 }
