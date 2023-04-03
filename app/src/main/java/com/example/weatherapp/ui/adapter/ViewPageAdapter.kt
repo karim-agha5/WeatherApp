@@ -3,11 +3,12 @@ package com.example.weatherapp.ui.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import com.example.weatherapp.ui.fragment.DailyForecastFragment
-import com.example.weatherapp.ui.fragment.DetailsFragment
-import com.example.weatherapp.ui.fragment.ThirdFragment
+import com.example.weatherapp.ui.fragment.mainapp.DailyForecastFragment
+import com.example.weatherapp.ui.fragment.mainapp.DetailsFragment
+import com.example.weatherapp.ui.fragment.mainapp.ThirdFragment
 
-class ViewPagerAdapter(fm: FragmentManager, behavior: Int) : FragmentStatePagerAdapter(fm,behavior) {
+class ViewPagerAdapter(
+    fm: FragmentManager, behavior: Int) : FragmentStatePagerAdapter(fm,behavior) {
 
     override fun getCount(): Int = 3
 

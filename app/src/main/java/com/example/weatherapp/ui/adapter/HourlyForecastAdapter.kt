@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.*
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
 import com.example.weatherapp.databinding.HourlyForecastItemBinding
+import com.example.weatherapp.util.*
 
 class HourlyForecastAdapter
     : ListAdapter<HourlyWeatherInfo,HourlyForecastAdapter.CustomViewHolder>(HourlyForecastDiffUtil()) {
@@ -35,7 +36,6 @@ class HourlyForecastAdapter
         holder.hourlyForecastItemBinding.tvHourlyWeatherDate.text =
             getDisplayedTime(getItem(position).dt * fromSecondsToMillisConversionUnits)
     }
-
 
 }
 

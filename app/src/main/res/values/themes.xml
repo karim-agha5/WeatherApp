@@ -16,7 +16,23 @@
 
         <item name="android:enforceStatusBarContrast"  tools:targetApi="q">false</item>
         <item name="android:enforceNavigationBarContrast"  tools:targetApi="q">false</item>
-
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
 
     </style>
+
+    <!-- Custom AlertDialog buttons colors -->
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">#77C3EC</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/red_shade_2</item>
+    </style>
+
 </resources>

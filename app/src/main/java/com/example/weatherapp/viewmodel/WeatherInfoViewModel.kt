@@ -1,11 +1,9 @@
 package com.example.weatherapp.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.TAG
 import com.example.weatherapp.data.repository.WeatherRepository
 import com.example.weatherapp.data.source.remote.response.WeatherOneCallResponse
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo

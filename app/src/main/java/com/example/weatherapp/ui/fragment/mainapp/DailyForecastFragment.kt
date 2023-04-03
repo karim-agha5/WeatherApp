@@ -1,4 +1,4 @@
-package com.example.weatherapp.ui.fragment
+package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -35,8 +35,6 @@ class DailyForecastFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         weatherInfoViewModel = ViewModelProvider(requireActivity()).get(WeatherInfoViewModel::class.java)
-        val adapter = DailyWeatherAdapter()
-        binding.dailyWeatherAdapter = adapter
 
         /*
         * Once the Activity hierarchy gets inflated and this fragment's view hierarchy gets inflated, as well.
@@ -44,13 +42,9 @@ class DailyForecastFragment : Fragment() {
         * The Activity is responsible for providing the lat, lon of the location.
         * */
         weatherInfoViewModel.weatherOneCallResponse.observe(viewLifecycleOwner, Observer {
-            var list: List<DailyWeatherInfo> = mutableListOf()
-            /*for(item in it.dailyForecast.indices){
-                if(item == 0) continue // skip first item, because it's the current weather forecast
-                list.add(it.dailyForecast[item])
-            }*/
-            list = it.dailyForecast
-            adapter.submitList(list)
+            val adapter = DailyWeatherAdapter()
+            binding.dailyWeatherAdapter = adapter
+            adapter.submitList(it.dailyForecast)
         })
     }
 }

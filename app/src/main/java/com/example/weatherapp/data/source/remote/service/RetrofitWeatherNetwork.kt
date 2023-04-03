@@ -5,10 +5,12 @@ import com.example.weatherapp.data.source.remote.response.CurrentWeatherResponse
 import com.example.weatherapp.data.source.remote.response.HourlyForecastResponse
 import com.example.weatherapp.data.source.remote.response.WeatherOneCallResponse
 import com.example.weatherapp.data.source.remote.response.dataclass.WeatherInfo
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 const val baseUrl: String = "https://pro.openweathermap.org/data/2.5/forecast/"
 const val oneCallBaseUrl: String = "https://api.openweathermap.org/data/2.5/"
@@ -54,10 +56,17 @@ private interface WeatherNetworkApi {
  * */
 
 object RetrofitWeatherNetwork : IWeatherRemoteDataSource{
+    private val client: OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .connectTimeout(30,TimeUnit.SECONDS)
+            .readTimeout(30,TimeUnit.SECONDS)
+            .build()
     private val weatherNetworkApi =
         Retrofit
             .Builder()
             .baseUrl(oneCallBaseUrl)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(WeatherNetworkApi::class.java)

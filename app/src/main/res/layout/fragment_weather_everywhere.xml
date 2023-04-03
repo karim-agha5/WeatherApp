@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragment.initialsetup.WeatherEverywhereFragment"
+    android:padding="16dp"
+    android:background="@color/white_97_brightness">
+
+
+
+    <ImageView
+        android:id="@+id/iv_detailed_weather"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@drawable/two_locations_and_map"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp"/>
+
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Weather Conditions.\nEVERYWHERE."
+        android:textSize="32sp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/iv_detailed_weather"
+        android:layout_marginTop="38dp"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:fontFamily="@font/poppins_light"
+        android:includeFontPadding="false"
+        android:text="Find weather conditions for thousands of places Worldwide"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_title"
+        app:layout_constraintStart_toStartOf="@+id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+    
+    
+    
+    <Button
+        android:id="@+id/btn_onbaording_screen1_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_light"
+        android:backgroundTint="@color/red_shade_3"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
