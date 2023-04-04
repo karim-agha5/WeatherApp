@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.*
 import android.os.Bundle
+import android.os.StrictMode
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
@@ -20,7 +21,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
 import com.example.weatherapp.util.LocationPermissionManager
@@ -43,6 +47,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var navController: NavController
+    private val settingsManager by lazy {
+        SettingsManager.getInstance(applicationContext)
+    }
 
 
     private val egLat: String by lazy{"24.0889"}
@@ -53,14 +60,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Set the status bar to be transparent
-        WindowCompat.setDecorFitsSystemWindows(window,false)
+        WindowCompat.setDecorFitsSystemWindows(window,true)
 
+        enableStrictMode()
 
         setupNetworkCheck()
         initMainActivityBinding()
         val navHost: NavHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         navController = navHost.navController
+
+        // pop main fragment off the stack because NoLocationPermissionFragment navigates to it
         navController.popBackStack()
         navController.navigate(R.id.noLocationPermissionFragment)
 
@@ -81,7 +91,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun enableStrictMode(){
+       if(BuildConfig.DEBUG){
+           val policy =
+               StrictMode.ThreadPolicy.Builder()
+                   .detectAll()
+                   .penaltyLog()
+                   .build()
+           StrictMode.setThreadPolicy(policy)
+       }
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        //TODO Close DB connection here
+    }
 
     private fun setupLocationPermissionManager(view: View){
         locationPermissionManager =
@@ -261,21 +285,24 @@ class MainActivity : AppCompatActivity() {
         if(requestCode == LOCATION_PERMISSION_GRANTED_REQUEST_CODE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 // handled by NoLocationPermissionFragment
-              //  navController.navigate(R.id.mainFragment)
-                Log.i(TAG, "MainActivity. onRequestPermissionResult() called." +
-                        "Permission granted. Should navigate now")
-                navController.popBackStack()
-                navController.navigate(R.id.mainFragment)
+                /*navController.popBackStack()
+                navController.navigate(R.id.mainFragment)*/
+
+
+                if(settingsManager.isUserSettingsLocationSetToGps()){
+                    navController.popBackStack()
+                    navController.navigate(R.id.mainFragment)
+                }
+                else{
+                    navController.popBackStack()
+                    navController.navigate(R.id.addLocationFragment)
+                }
+
+
+
             }
             else{
-                /*locationPermissionManager
-                    .onPermissionResult(
-                        false,
-                        null,
-                        this::onLocationPermissionDismissed
-                    )
-                Log.i(TAG, "MainActivity. onRequestPermissionResult() called." +
-                        "Permission denied. dismissed action should be called.")*/
+
                 // The user checked "never ask again"
                 if(!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
                     AlertDialog

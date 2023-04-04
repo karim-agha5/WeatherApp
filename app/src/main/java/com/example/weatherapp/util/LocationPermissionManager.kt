@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
  * */
 
 // TODO fix the launcher lifecycle bugs later.
+// TODO maybe use Builder design pattern.
 
 class LocationPermissionManager(
     private val activity: ComponentActivity,
@@ -157,13 +158,11 @@ class LocationPermissionManager(
             else{
                 onPermissionDismissedAction?.invoke()
                 counter++
-                Log.i(TAG, "permission denied : counter is -> $counter ")
             }
 
         } else {
             // Do something else
             onPermissionGrantedAction?.invoke()
-            Log.i(TAG, "onPermissionResult: onPermissionGrantedAction() should be invoked!")
         }
     }
 
@@ -186,7 +185,7 @@ class LocationPermissionManager(
                     showLocationPermissionDialog()
                 }
 
-            val snackBarView: View = snackbar.view
+          /*  val snackBarView: View = snackbar.view
             val params = snackBarView.layoutParams as CoordinatorLayout.LayoutParams
 
             params.setMargins(
@@ -196,7 +195,7 @@ class LocationPermissionManager(
                 params.bottomMargin + 60
             )
 
-            snackBarView.layoutParams = params
+            snackBarView.layoutParams = params*/
             snackbar.show()
 
         }
