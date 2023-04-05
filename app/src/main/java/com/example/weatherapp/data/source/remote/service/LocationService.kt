@@ -7,6 +7,8 @@ import android.location.Location
 import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class LocationService(context: Context) {
@@ -46,8 +48,10 @@ class LocationService(context: Context) {
      * @return mutable list of addresses that may or may not contain any addresses.
      * There's no guarantee that his method returns accurate or any address at all.
      * */
-    fun getAddresses(lat: Double,lon: Double) : MutableList<Address>? {
-        return geocoder.getFromLocation(lat,lon,1)
+    suspend fun getAddresses(lat: Double,lon: Double) : MutableList<Address>? = withContext(Dispatchers.IO){
+        return@withContext geocoder.getFromLocation(lat,lon,1)
+        //  return geocoder.getFromLocation(lat,lon,1)
     }
+
 
 }

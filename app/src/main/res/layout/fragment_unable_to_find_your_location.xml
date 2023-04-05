@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.mainapp.UnableToFindALocationFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/iv_unable_to_find_a_location"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:src="@drawable/unable_to_find_a_location"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tv_unable_to_find_a_location_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:text="@string/unable_to_find_a_location"
+            android:textColor="@color/black"
+            android:textSize="26sp"
+            app:layout_constraintTop_toBottomOf="@id/iv_unable_to_find_a_location" />
+
+
+        <Button
+            android:id="@+id/btn_open_up_the_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/red_shade_3"
+            android:text="@string/open_up_the_map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_unable_to_find_a_location_message" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
