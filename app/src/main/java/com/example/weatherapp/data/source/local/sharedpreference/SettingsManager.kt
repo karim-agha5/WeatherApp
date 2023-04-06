@@ -120,12 +120,13 @@ class SettingsManager private constructor(val context: Context){
             getUserSettingsSharedPreferencesEditor()
                 .remove(keyName)
                 .apply()
+
     }
 
 
     fun setUserSettingsGpsEnabled() {
         if (userSettingsSharedPreferencesContains(USER_SETTINGS_MAP_KEY)) {
-            getUserSettingsSharedPreferencesEditor().remove(USER_SETTINGS_MAP_KEY)
+            deleteUserSettingsSharedPreferencesEntry(USER_SETTINGS_MAP_KEY)
         }
         getUserSettingsSharedPreferencesEditor().putString(
             USER_SETTINGS_GPS_KEY,

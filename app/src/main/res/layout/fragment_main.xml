@@ -7,11 +7,7 @@
             name="viewmodel"
             type="com.example.weatherapp.viewmodel.WeatherInfoViewModel" />
     </data>
-<!--
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">-->
+
 
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -55,13 +51,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_bold"
-                            android:text="@{viewmodel.weatherOneCallResponse.currentWeatherDetailedInfo.component7() .get(0).main}"
+                            android:text="@{viewmodel.weatherOneCallResponse.currentWeatherDetailedInfo.component7().get(0).main}"
                             android:textSize="32sp"
                             android:textColor="@color/white_97_brightness"
                             android:includeFontPadding="false"
                             android:layout_marginTop="62dp"
-                            app:layout_constraintStart_toStartOf="@id/tv_weather_location"
-                            app:layout_constraintEnd_toEndOf="@id/tv_weather_location"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -70,11 +66,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_medium"
-                            android:text="@{viewmodel.weatherOneCallResponse.timezone}"
                             android:textColor="@color/white_97_brightness"
                             android:textSize="23sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
+                            android:maxLines="3"
+                            app:layout_constraintEnd_toEndOf="@id/tv_weather_status"
+                            app:layout_constraintStart_toStartOf="@id/tv_weather_status"
                             app:layout_constraintTop_toBottomOf="@id/tv_weather_status" />
 
                         <TextView
@@ -82,7 +78,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/rubik_bold"
-                            android:text="@string/tv_weather_degree"
+                            tools:text="@string/tv_weather_degree"
                             android:textSize="82sp"
                             android:textColor="@color/white_97_brightness"
                             app:layout_constraintStart_toStartOf="@id/tv_weather_location"
@@ -128,16 +124,4 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-
-       <!-- <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:menu="@menu/main_menu_items"
-            app:itemVerticalPadding="18dp" />
-
-
-    </androidx.drawerlayout.widget.DrawerLayout>-->
 </layout>

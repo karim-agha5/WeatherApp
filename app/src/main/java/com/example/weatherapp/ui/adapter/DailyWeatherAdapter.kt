@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -9,10 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.*
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.databinding.DailyWeatherItemBinding
-import com.example.weatherapp.util.fromSecondsToMillisConversionUnits
-import com.example.weatherapp.util.getCDegreeFormat
-import com.example.weatherapp.util.getDisplayedDate
-import com.example.weatherapp.util.getWeekDay
+import com.example.weatherapp.util.*
 
 class DailyWeatherAdapter
     : ListAdapter<DailyWeatherInfo,DailyWeatherAdapter.CustomViewHolder>(DailyWeatherInfoDiffUtil()) {
@@ -29,8 +27,10 @@ class DailyWeatherAdapter
         holder.binding.dailyWeatherInfo = getItem(position)
         displayDate(holder,position)
         // Display the weather degree in celsius format
-        holder.binding.tvDailyWeatherItemDegree.text =
-            getCDegreeFormat(Math.round((getItem(position).temp.day - 273.15)).toFloat())
+        val maxAndMinWeatherDegree =
+            "${getCDegreeFormat(Math.round((getItem(position).temp.max - 273.15)).toFloat())} " +
+                    "/ ${getCDegreeFormat(Math.round((getItem(position).temp.min - 273.15)).toFloat())}"
+        holder.binding.tvDailyWeatherItemDegree.text = maxAndMinWeatherDegree
         loadWeatherIcon(holder)
     }
 

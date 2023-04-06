@@ -14,19 +14,22 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
-import com.example.weatherapp.util.TAG
+import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.databinding.FragmentMainBinding
 import com.example.weatherapp.util.getCDegreeFormat
 import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
 import com.example.weatherapp.util.LocationPermissionManager
+import com.example.weatherapp.util.TAG
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
+import com.google.android.gms.maps.model.LatLng
 
 
 class MainFragment : Fragment() {
@@ -34,11 +37,16 @@ class MainFragment : Fragment() {
     private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
     private lateinit var locationPermissionManager: LocationPermissionManager
+    private val locationService by lazy {
+        LocationService(requireActivity())
+    }
     private val settingsManager by lazy {
         SettingsManager.getInstance(requireContext())
     }
     private val egLat: String by lazy{"24.0889"}
     private val egLon: String by lazy{"32.8998"}
+    private var lat: Double = 0.0
+    private var lon: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +65,8 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false)
-        binding.lifecycleOwner = this
+      //  binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -67,13 +76,38 @@ class MainFragment : Fragment() {
         loadCollapsingToolbarImage()
         locationPermissionManager = setupLocationPermissionManager(view)
        // locationPermissionManager.requestLocationPermission()
-            if (ActivityCompat.checkSelfPermission(
-                    requireActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                == PackageManager.PERMISSION_GRANTED
-            ) {
-                fetchInitialData()
+
+
+        /*
+        *
+        * TODO Check whether you're being navigated from NoLocationPermissionFragment
+        *  or AddLocationFragment
+        *  NoLocationPermissionFragment -> fetch via GPS
+        *  AddLocationFragment -> fetch via Bundle ????? or however you receive lat and lon
+        *
+        * */
+
+
+
+            if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                //fetchInitialData()
+                if(settingsManager.isUserSettingsLocationSetToGps()){
+                    val futureLocationViaGps = locationService.startGettingLocationViaGps()
+                    futureLocationViaGps.observe(viewLifecycleOwner) {
+                        // Sometimes the location returned is null. So a nullability check is needed.
+                        if(it != null){
+                            fetchInitialData(it.latitude,it.longitude)
+                            displayAddress(it.latitude,it.longitude)
+                        }
+                    }
+                }
+
+                if (settingsManager.isUserSettingsLocationSetToMap()){
+                    val latLng = weatherInfoViewModel.getMapLatLng()
+                    fetchInitialData(latLng.latitude, latLng.longitude)
+                    displayAddress(latLng.latitude,latLng.longitude)
+                }
+
             }
 
         setUpTabLayoutFunctionality()
@@ -115,21 +149,38 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun fetchInitialData(){
-        Log.i(TAG, "fetching data.... ")
+    private fun fetchInitialData(lat: Double ,lon: Double){
+        Log.i(TAG, "fetchInitialData: $lat \n $lon")
         // Run it on the UI thread because it's not possible to observe on a background thread.
         requireActivity().runOnUiThread {
-            val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
+            val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(lat.toString(),lon.toString())
             weatherOneCallResponse.observe(viewLifecycleOwner) {
                 binding.tvWeatherDegree.text = getCDegreeFormat((it.currentWeatherDetailedInfo.temp - 273.15).toFloat())
                 // set the selected weather to today's weather info so it can be displayed in the details fragment
                 binding?.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
                 binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
-
             }
         }
     }
 
+    private fun displayAddress(lat: Double,lon: Double){
+        val futureAddress = weatherInfoViewModel.getAddress(lat, lon)
+        futureAddress.observe(viewLifecycleOwner, Observer {
+            var address = ""
+            if(it?.get(0)?.subAdminArea?.isNotEmpty() == true
+                && it?.get(0)?.subAdminArea?.isNotBlank() == true){
+                address = "${it?.get(0)?.subAdminArea ?: "Unknown Name"}\n"
+            }
+
+            address += "${it?.get(0)?.adminArea ?: "Unknown Name"}, "
+            address += it?.get(0)?.countryName ?: "Unknown Name"
+
+            binding.tvWeatherLocation.apply {
+                this.text = address
+            }
+
+        })
+    }
 
     private fun loadCollapsingToolbarImage(){
         Glide
@@ -168,7 +219,7 @@ class MainFragment : Fragment() {
     }
 
     private fun onLocationPermissionGranted(){
-        fetchInitialData()
+      //  fetchInitialData()
     }
 
     private fun onLocationPermissionDenied(){
@@ -178,4 +229,6 @@ class MainFragment : Fragment() {
     private fun onGoToSettingsClick(){
         // Not really needed
     }
+
+
 }

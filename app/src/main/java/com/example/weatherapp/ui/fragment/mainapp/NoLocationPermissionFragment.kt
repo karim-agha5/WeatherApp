@@ -13,6 +13,7 @@ import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
 import com.example.weatherapp.util.LocationPermissionManager
 import com.example.weatherapp.util.TAG
@@ -22,8 +23,9 @@ class NoLocationPermissionFragment : Fragment() {
 
     private lateinit var btnRetry: Button
     private lateinit var locationPermissionManager: LocationPermissionManager
-
-
+    private val settingsManager by lazy {
+        SettingsManager.getInstance(requireContext().applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +64,20 @@ class NoLocationPermissionFragment : Fragment() {
 
     private fun onLocationPermissionGranted(){
         // pops self of the stack and navigates to the MainFragment
-        findNavController().popBackStack()
-        findNavController().navigate(R.id.mainFragment)
+       // findNavController().popBackStack()
+
+        if(settingsManager.isUserSettingsLocationSetToGps()){
+            findNavController().navigate(R.id.action_noLocationPermissionFragment_to_mainFragment2)
+        }
+        else{
+            /*
+            * TODO bad navigation practice. Fix later.
+            * */
+            findNavController().navigate(R.id.action_noLocationPermissionFragment_to_unableToFindALocationFragment2)
+            findNavController().graph.setStartDestination(R.id.unableToFindALocationFragment)
+        }
+
+        //findNavController().navigate(R.id.action_noLocationPermissionFragment_to_mainFragment2)
     }
 
     private fun onLocationPermissionDismissed(){
