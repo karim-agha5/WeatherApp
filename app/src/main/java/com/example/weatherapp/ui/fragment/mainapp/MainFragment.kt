@@ -3,6 +3,7 @@ package com.example.weatherapp.ui.fragment.mainapp
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -26,7 +27,9 @@ import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
 import com.example.weatherapp.util.LocationPermissionManager
+import com.example.weatherapp.util.TAG
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
+import com.google.android.gms.maps.model.LatLng
 
 
 class MainFragment : Fragment() {
@@ -84,18 +87,27 @@ class MainFragment : Fragment() {
         *
         * */
 
-        val futureLocationViaGps = locationService.startGettingLocationViaGps()
 
-            if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 //fetchInitialData()
-                futureLocationViaGps.observe(viewLifecycleOwner) {
-                    // Sometimes the location returned is null. So a nullability check is needed.
-                   if(it != null){
-                       fetchInitialData(it.latitude,it.longitude)
-                       displayAddress(it.latitude,it.longitude)
-                   }
+                if(settingsManager.isUserSettingsLocationSetToGps()){
+                    val futureLocationViaGps = locationService.startGettingLocationViaGps()
+                    futureLocationViaGps.observe(viewLifecycleOwner) {
+                        // Sometimes the location returned is null. So a nullability check is needed.
+                        if(it != null){
+                            fetchInitialData(it.latitude,it.longitude)
+                            displayAddress(it.latitude,it.longitude)
+                        }
+                    }
                 }
+
+                if (settingsManager.isUserSettingsLocationSetToMap()){
+                    val latLng = weatherInfoViewModel.getMapLatLng()
+                    fetchInitialData(latLng.latitude, latLng.longitude)
+                    displayAddress(latLng.latitude,latLng.longitude)
+                }
+
             }
 
         setUpTabLayoutFunctionality()
@@ -138,6 +150,7 @@ class MainFragment : Fragment() {
     }
 
     private fun fetchInitialData(lat: Double ,lon: Double){
+        Log.i(TAG, "fetchInitialData: $lat \n $lon")
         // Run it on the UI thread because it's not possible to observe on a background thread.
         requireActivity().runOnUiThread {
             val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(lat.toString(),lon.toString())
@@ -146,7 +159,6 @@ class MainFragment : Fragment() {
                 // set the selected weather to today's weather info so it can be displayed in the details fragment
                 binding?.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
                 binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
-
             }
         }
     }
@@ -154,9 +166,17 @@ class MainFragment : Fragment() {
     private fun displayAddress(lat: Double,lon: Double){
         val futureAddress = weatherInfoViewModel.getAddress(lat, lon)
         futureAddress.observe(viewLifecycleOwner, Observer {
+            var address = ""
+            if(it?.get(0)?.subAdminArea?.isNotEmpty() == true
+                && it?.get(0)?.subAdminArea?.isNotBlank() == true){
+                address = "${it?.get(0)?.subAdminArea ?: "Unknown Name"}\n"
+            }
+
+            address += "${it?.get(0)?.adminArea ?: "Unknown Name"}, "
+            address += it?.get(0)?.countryName ?: "Unknown Name"
+
             binding.tvWeatherLocation.apply {
-                this.text = it?.get(0)?.adminArea
-                this.append(",${it?.get(0)?.countryName}")
+                this.text = address
             }
 
         })

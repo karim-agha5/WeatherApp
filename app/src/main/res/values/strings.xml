@@ -43,4 +43,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="unable_to_find_a_location">Unable to find a location</string>
     <string name="open_up_the_map">Open Up The Map</string>
+    <string name="pin">Pin</string>
+    <string name="favorite">Favorite</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

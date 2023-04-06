@@ -12,6 +12,7 @@ import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.data.source.remote.service.RetrofitWeatherNetwork
 import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.util.TAG
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -24,6 +25,7 @@ class WeatherInfoViewModel(application: Application) : AndroidViewModel(applicat
     private val _selectedWeatherInfo: MutableLiveData<DailyWeatherInfo> = MutableLiveData()
     private val _selectedListOfWeatherHourlyInfo: MutableLiveData<List<HourlyWeatherInfo>> = MutableLiveData()
     private val _address: MutableLiveData<MutableList<Address>?> = MutableLiveData()
+    private var mapLatLng: LatLng = LatLng(0.0,0.0)
     var weatherOneCallResponse: LiveData<WeatherOneCallResponse> = _weatherOneCallResponse
     val selectedWeatherInfo: LiveData<DailyWeatherInfo> = _selectedWeatherInfo
     val selectedListOfWeatherHourlyInfo: LiveData<List<HourlyWeatherInfo>> = _selectedListOfWeatherHourlyInfo
@@ -38,10 +40,17 @@ class WeatherInfoViewModel(application: Application) : AndroidViewModel(applicat
 
     fun getAddress(lat: Double, lon: Double) : LiveData<MutableList<Address>?> {
         viewModelScope.launch(Dispatchers.IO) {
-            _address.postValue(locationService.getAddresses(lat, lon))
+            var list: MutableList<Address>? = locationService.getAddresses(lat, lon)
+            if(list?.size == 0) list = null // Prevents ArrayIndexOutOfBoundsException
+            _address.postValue(list)
         }
         return address
     }
+
+    fun setMapLatLng(latLng: LatLng){
+        mapLatLng = latLng
+    }
+    fun getMapLatLng() = mapLatLng
 
     fun setSelectedWeatherInfo(dailyWeatherInfo: DailyWeatherInfo){
         _selectedWeatherInfo.value = dailyWeatherInfo

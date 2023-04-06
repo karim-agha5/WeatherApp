@@ -1,14 +1,16 @@
 package com.example.weatherapp.ui.fragment.mainapp
 
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -32,9 +34,9 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
     private lateinit var toolbar: Toolbar
     private lateinit var mapView: MapView
     private lateinit var mMap: GoogleMap
-    private val weatherInfoViewModel by lazy {
-        ViewModelProvider(this).get(WeatherInfoViewModel::class.java)
-    }
+    private var marker: Marker? = null
+    private lateinit var navController: NavController
+    private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
     private val locationService: LocationService by lazy {
         LocationService(requireContext().applicationContext)
     }
@@ -42,6 +44,7 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
         SettingsManager.getInstance(requireContext().applicationContext)
     }
 
+    private lateinit var currentLocationLatLng: LatLng
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -91,33 +94,38 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        navController = findNavController()
         // Set the initial position of the marker to iceland
         val iceland = LatLng(64.46207,-18.31371)
-        mMap.addMarker(MarkerOptions().position(iceland).title("Iceland").draggable(true))
+        marker = mMap.addMarker(MarkerOptions().position(iceland).title("Iceland").draggable(true))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(iceland))
         mMap.uiSettings.isMapToolbarEnabled = false
         dragMarkerImpl(googleMap)
+
+        mMap.setOnMapClickListener { latLng ->
+
+            currentLocationLatLng = latLng
+            marker?.position = latLng
+
+            val sheet = BottomNavigationSheetFragment()
+            sheet.setAddLocationFragment(this)
+            sheet.show(childFragmentManager,"newPinTag")
+
+        }
     }
 
-
-
+    fun navigateToMainFragment(){
+        weatherInfoViewModel.setMapLatLng(currentLocationLatLng)
+        findNavController().graph.setStartDestination(R.id.mainFragment);
+        findNavController().navigate(R.id.action_addLocationFragment_to_mainFragment)
+    }
+    fun getLatLng() : LatLng = currentLocationLatLng
 
     private fun dragMarkerImpl(googleMap: GoogleMap) {
         googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
             override fun onMarkerDrag(p0: Marker) {}
 
             override fun onMarkerDragEnd(p0: Marker) {
-
-                val mutableList = weatherInfoViewModel.getAddress(
-                    p0.position.latitude,
-                    p0.position.longitude
-                )
-
-                Log.i(TAG, "${p0.position.latitude}\n ${p0.position.longitude}")
-
-                mutableList.observe(this@AddLocationFragment) {
-                    p0.title = getMarkerTitle(it?.get(0))
-                }
 
 
             }
@@ -138,7 +146,9 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
         if(adminArea?.isBlank() == false){
             stringBuilder.append("$adminArea, ")
         }
-        stringBuilder.append(countryName)
+        if(countryName?.isNotEmpty() == true && countryName?.isNotBlank() == true){
+            stringBuilder.append(countryName)
+        }
         return stringBuilder.toString()
     }
 
@@ -174,11 +184,14 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
             mapViewBundle = Bundle()
             outState.putBundle(resources.getString(R.string.google_maps_key),mapViewBundle)
         }
-        mapView.onSaveInstanceState(mapViewBundle)
+        if(this::mapView.isInitialized){
+            mapView.onSaveInstanceState(mapViewBundle)
+        }
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
+
 }

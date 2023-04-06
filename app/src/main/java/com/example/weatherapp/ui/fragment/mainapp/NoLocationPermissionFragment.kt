@@ -65,17 +65,16 @@ class NoLocationPermissionFragment : Fragment() {
     private fun onLocationPermissionGranted(){
         // pops self of the stack and navigates to the MainFragment
        // findNavController().popBackStack()
-        /*
-        * TODO Check after the permission being granted whether the settings is set to GPS or Map
-        *  if GPS -> navigate to MainFragment
-        *  if Map -> navigate to AddLocationFragment
-        * */
 
         if(settingsManager.isUserSettingsLocationSetToGps()){
             findNavController().navigate(R.id.action_noLocationPermissionFragment_to_mainFragment2)
         }
         else{
-            findNavController().navigate(R.id.action_noLocationPermissionFragment_to_addLocationFragment)
+            /*
+            * TODO bad navigation practice. Fix later.
+            * */
+            findNavController().navigate(R.id.action_noLocationPermissionFragment_to_unableToFindALocationFragment2)
+            findNavController().graph.setStartDestination(R.id.unableToFindALocationFragment)
         }
 
         //findNavController().navigate(R.id.action_noLocationPermissionFragment_to_mainFragment2)

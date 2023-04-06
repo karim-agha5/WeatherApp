@@ -32,7 +32,17 @@
     <fragment
         android:id="@+id/addLocationFragment"
         android:name="com.example.weatherapp.ui.fragment.mainapp.AddLocationFragment"
-        tools:layout="@layout/fragment_add_location" />
+        tools:layout="@layout/fragment_add_location" >
+        <action
+            android:id="@+id/action_addLocationFragment_to_bottomNavigationSheetFragment"
+            app:destination="@id/bottomNavigationSheetFragment"
+            app:popUpTo="@id/addLocationFragment" />
+        <action
+            android:id="@+id/action_addLocationFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.example.weatherapp.ui.fragment.mainapp.FavoriteFragment"
@@ -44,21 +54,41 @@
     <fragment
         android:id="@+id/noLocationPermissionFragment"
         android:name="com.example.weatherapp.ui.fragment.mainapp.NoLocationPermissionFragment"
-        android:label="fragment_no_location_permission"
-        tools:layout="@layout/fragment_no_location_permission" >
+        tools:layout="@layout/fragment_no_location_permission">
         <action
             android:id="@+id/action_noLocationPermissionFragment_to_mainFragment2"
             app:destination="@id/mainFragment"
             app:popUpTo="@id/main_graph" />
         <action
-            android:id="@+id/action_noLocationPermissionFragment_to_addLocationFragment"
-            app:destination="@id/addLocationFragment"
+            android:id="@+id/action_noLocationPermissionFragment_to_unableToFindALocationFragment2"
+            app:destination="@id/unableToFindALocationFragment"
             app:popUpTo="@id/noLocationPermissionFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/unableToFindALocationFragment"
         android:name="com.example.weatherapp.ui.fragment.mainapp.UnableToFindALocationFragment"
-        android:label="fragment_unable_to_find_your_location"
-        tools:layout="@layout/fragment_unable_to_find_your_location" />
+        tools:layout="@layout/fragment_unable_to_find_your_location">
+        <action
+            android:id="@+id/action_unableToFindALocationFragment_to_addLocationFragment"
+            app:destination="@id/addLocationFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/bottomNavigationSheetFragment"
+        android:name="com.example.weatherapp.ui.fragment.mainapp.BottomNavigationSheetFragment"
+        android:label="fragment_bottom_navigation_sheet"
+        tools:layout="@layout/fragment_bottom_navigation_sheet" >
+        <argument
+            android:name="countryName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="adminArea"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="subadminArea"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
 </navigation>
