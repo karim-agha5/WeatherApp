@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.adapter
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,14 +9,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.*
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.databinding.DailyWeatherItemBinding
 import com.example.weatherapp.util.*
 
-class DailyWeatherAdapter
+class DailyWeatherAdapter(val settingsManager: SettingsManager,private val context: Context)
     : ListAdapter<DailyWeatherInfo,DailyWeatherAdapter.CustomViewHolder>(DailyWeatherInfoDiffUtil()) {
 
     class CustomViewHolder(var binding: DailyWeatherItemBinding) : RecyclerView.ViewHolder(binding.root)
+    var maxTemp: Double = 0.0
+    var minTemp: Double = 0.0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val dailyWeatherItemBinding: DailyWeatherItemBinding = DataBindingUtil
@@ -27,9 +31,10 @@ class DailyWeatherAdapter
         holder.binding.dailyWeatherInfo = getItem(position)
         displayDate(holder,position)
         // Display the weather degree in celsius format
-        val maxAndMinWeatherDegree =
-            "${getCDegreeFormat(Math.round((getItem(position).temp.max - 273.15)).toFloat())} " +
-                    "/ ${getCDegreeFormat(Math.round((getItem(position).temp.min - 273.15)).toFloat())}"
+        maxTemp = getItem(position).temp.max
+        minTemp = getItem(position).temp.min
+        convertData(maxTemp,minTemp)
+        val maxAndMinWeatherDegree = getDegreeFormat(maxTemp,minTemp)
         holder.binding.tvDailyWeatherItemDegree.text = maxAndMinWeatherDegree
         loadWeatherIcon(holder)
     }
@@ -40,7 +45,7 @@ class DailyWeatherAdapter
         val dt = holder.binding.dailyWeatherInfo?.dt?.times(fromSecondsToMillisConversionUnits)
         holder.binding.tvDailyWeatherItemDate.text = getDisplayedDate(dt ?: -1)
         if(position == 0){
-            holder.binding.tvDailyWeatherItemDay.text = "Today"
+            holder.binding.tvDailyWeatherItemDay.text = context.getString(R.string.today)
         }
         else {
             holder.binding.tvDailyWeatherItemDay.text = getWeekDay(dt ?: -1)
@@ -50,6 +55,36 @@ class DailyWeatherAdapter
         if(holder.binding.dailyWeatherInfo != null){
             holder.binding.imageUrl = "https://openweathermap.org/img/wn/" +
                     holder.binding.dailyWeatherInfo?.weatherList?.get(0)?.icon+ "@2x.png"
+        }
+    }
+
+    private fun getDegreeFormat(temp1: Double,temp2: Double) : String{
+        return when{
+            settingsManager
+                .isUserSettingsTemperatureSetToCelsius() ->
+                "${getTemperatureUnit(temp1.toInt(), CELSIUS)}/${getTemperatureUnit(temp2.toInt(), CELSIUS)}"
+
+            settingsManager
+                .isUserSettingsTemperatureSetToFahrenheit() ->
+                "${getTemperatureUnit(temp1.toInt(), FAHRENHEIT)}/${getTemperatureUnit(temp2.toInt(), FAHRENHEIT)}"
+
+            else -> "${getTemperatureUnit(temp1.toInt(), KELVIN)}/${getTemperatureUnit(temp2.toInt(), KELVIN)}"
+        }
+    }
+
+    private fun convertData(temp1: Double, temp2: Double){
+        when{
+            settingsManager
+                .isUserSettingsTemperatureSetToCelsius() -> {
+                    maxTemp = Converter.kelvinToCelsius(temp1)
+                    minTemp = Converter.kelvinToCelsius(temp2)
+                }
+
+            settingsManager
+                .isUserSettingsTemperatureSetToFahrenheit() -> {
+                    maxTemp = Converter.celsiusToFahrenheit(temp1)
+                    minTemp = Converter.celsiusToFahrenheit(temp2)
+                }
         }
     }
 }

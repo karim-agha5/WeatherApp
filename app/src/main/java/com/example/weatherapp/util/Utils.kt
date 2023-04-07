@@ -97,7 +97,7 @@ fun getCloudsUnit(clouds: Int) : String{
     return "$clouds%"
 }
 
-fun getTemperatureUnit(temperature: Float,temperatureUnit: Int) : String{
+fun getTemperatureUnit(temperature: Number,temperatureUnit: Int) : String{
     return when (temperatureUnit) {
         KELVIN -> "$temperature K"
         CELSIUS -> "$temperature \u2103"
@@ -105,7 +105,7 @@ fun getTemperatureUnit(temperature: Float,temperatureUnit: Int) : String{
     }
 }
 
-fun getWindSpeedUnit(windSpeed: Float,isUnitInMeterPerSec: Boolean) : String{
+fun getWindSpeedUnit(windSpeed: Number,isUnitInMeterPerSec: Boolean) : String{
     return if(isUnitInMeterPerSec) "$windSpeed meter/sec"
     else "$windSpeed miles/hour"
 }

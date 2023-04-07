@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.*
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
 import com.example.weatherapp.databinding.FragmentDetailsBinding
 import com.example.weatherapp.util.*
@@ -20,6 +21,10 @@ class DetailsFragment : Fragment() {
 
     private lateinit var fragmentDetailsBinding: FragmentDetailsBinding
     private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
+    private val settingsManager by lazy {
+        SettingsManager.getInstance(requireContext())
+    }
+    private var windSpeed: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +42,7 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var adapter = HourlyForecastAdapter()
+        var adapter = HourlyForecastAdapter(settingsManager)
         fragmentDetailsBinding.rvCurrentHourlyForecast.layoutManager =
             LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
         /*
@@ -50,9 +55,11 @@ class DetailsFragment : Fragment() {
         // If the data is still being fetched and the details tab is clicked
         if(weatherInfoViewModel.selectedWeatherInfo.value == null){
             weatherInfoViewModel.selectedWeatherInfo.observe(viewLifecycleOwner){
+                windSpeed = it.windSpeed.toDouble()
+                convertData()
                 fragmentDetailsBinding.tvHumidityValue.text = getHumidityUnit(it.humidity)
                 fragmentDetailsBinding.tvPressureValue.text = getPressureUnit(it.pressure)
-                fragmentDetailsBinding.tvWindSpeedValue.text = getWindSpeedUnit(it.windSpeed,true)
+                fragmentDetailsBinding.tvWindSpeedValue.text = formatData(windSpeed)
                 fragmentDetailsBinding.tvCloudsValue.text = getCloudsUnit(it.clouds)
             }
         }
@@ -61,7 +68,9 @@ class DetailsFragment : Fragment() {
         else{
             fragmentDetailsBinding.tvHumidityValue.text = getHumidityUnit(weatherInfoViewModel?.selectedWeatherInfo?.value?.humidity ?: 0)
             fragmentDetailsBinding.tvPressureValue.text = getPressureUnit(weatherInfoViewModel?.selectedWeatherInfo?.value?.pressure ?: 0)
-            fragmentDetailsBinding.tvWindSpeedValue.text = getWindSpeedUnit((weatherInfoViewModel?.selectedWeatherInfo?.value?.windSpeed ?: 0.0) as Float,true)
+            windSpeed = (weatherInfoViewModel?.selectedWeatherInfo?.value?.windSpeed ?: 0.0).toDouble()
+            convertData()
+            fragmentDetailsBinding.tvWindSpeedValue.text = formatData(windSpeed)
             fragmentDetailsBinding.tvCloudsValue.text = getCloudsUnit(weatherInfoViewModel?.selectedWeatherInfo?.value?.clouds ?: 0)
         }
 
@@ -90,5 +99,23 @@ class DetailsFragment : Fragment() {
             resultList.add(list[i])
         }
         return resultList.toList()
+    }
+
+    private fun convertData() {
+        when {
+            settingsManager
+                .isUserSettingsWindSpeedSetToMilesPerHour() ->
+                windSpeed = Converter.meterPerSecToMilePerHour(windSpeed)
+        }
+        windSpeed = ((windSpeed * 100).toInt()) / 100.0
+    }
+
+    private fun formatData(wind: Double) : String{
+        return when{
+            settingsManager
+                .isUserSettingsWindSpeedSetToMeterPerSec() -> getWindSpeedUnit(wind,true)
+
+            else -> getWindSpeedUnit(wind,false)
+        }
     }
 }
