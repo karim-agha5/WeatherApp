@@ -86,7 +86,6 @@ fun getCDegreeFormat(degree: Float) : String{
 }
 
 fun getHumidityUnit(humidity: Int) : String{
-   //return "$humidity g.m\u2073"
     return "$humidity%"
 }
 

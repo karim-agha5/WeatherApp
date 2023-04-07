@@ -1,18 +1,14 @@
 package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.RadioButton
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -20,12 +16,9 @@ import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.databinding.FragmentSettingsBinding
 import com.example.weatherapp.ui.activity.MainActivity
-import com.example.weatherapp.util.TAG
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var toolbar: Toolbar
-    private lateinit var btnDone: Button
     private lateinit var binding: FragmentSettingsBinding
     private val settingsManager by lazy {
         SettingsManager.getInstance(requireContext().applicationContext)
@@ -33,17 +26,15 @@ class SettingsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_settings,container,false)
         return binding.root
-        // Inflate the layout for this fragment
-       // return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
