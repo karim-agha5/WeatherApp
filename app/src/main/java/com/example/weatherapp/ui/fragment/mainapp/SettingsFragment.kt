@@ -48,17 +48,11 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupNavigationConfig()
         binding.btnUserSettingsDone.setOnClickListener {
             saveUserInitialSettings(view)
-            setInitialUserSettingsFinished()
             if(settingsManager.isUserSettingsLocationSetToMap()){
                 navigateToUnableToFindLocationFragment()
-                val fm = (requireParentFragment() as NavHostFragment).childFragmentManager
-                fm.fragments.forEachIndexed { index, fragment ->
-                    Log.d(TAG, "Fragment $index: ${fragment.javaClass.simpleName}")
-                }
             }
             else{
                 navigateToMainFragment()
@@ -106,10 +100,6 @@ class SettingsFragment : Fragment() {
         saveSelectedWindSpeedRadioButton(view)
         saveSelectedLanguageRadioButton(view)
         saveSelectedNotificationsSettingRadioButton(view)
-    }
-
-    private fun setInitialUserSettingsFinished(){
-        settingsManager.setInitialUserSettingsFinished(true)
     }
 
     private fun saveSelectedLocationRadioButton(view: View){
