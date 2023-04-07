@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -116,8 +117,14 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
 
     fun navigateToMainFragment(){
         weatherInfoViewModel.setMapLatLng(currentLocationLatLng)
-        findNavController().graph.setStartDestination(R.id.mainFragment);
         findNavController().navigate(R.id.action_addLocationFragment_to_mainFragment)
+        findNavController().graph.setStartDestination(R.id.mainFragment)
+
+
+       /* val fm = (requireParentFragment() as NavHostFragment).childFragmentManager
+        fm.fragments.forEachIndexed { index, fragment ->
+            Log.d(TAG, "Fragment $index: ${fragment.javaClass.simpleName}")
+        }*/
     }
     fun getLatLng() : LatLng = currentLocationLatLng
 

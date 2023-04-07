@@ -85,6 +85,7 @@ class BottomNavigationSheetFragment : BottomSheetDialogFragment() {
 
         binding.btnBottomNavigationSheetPin.setOnClickListener {
             addLocationFragment.navigateToMainFragment()
+            dismissNow()
         }
         binding.btnBottomNavigationSheetFavorite.setOnClickListener {
             Log.i(TAG, "Favorite Tapped! ")
