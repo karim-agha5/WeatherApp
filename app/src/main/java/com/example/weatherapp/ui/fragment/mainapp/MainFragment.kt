@@ -79,18 +79,11 @@ class MainFragment : Fragment() {
 
 
         /*
-        *
-        * TODO Check whether you're being navigated from NoLocationPermissionFragment
-        *  or AddLocationFragment
-        *  NoLocationPermissionFragment -> fetch via GPS
-        *  AddLocationFragment -> fetch via Bundle ????? or however you receive lat and lon
-        *
+        * Check if the location permission is given or not.
+        * If given, fetch the weather data from the API using either the GPS or google maps
+        * depending on the current user settings.
         * */
-
-
-
             if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //fetchInitialData()
                 if(settingsManager.isUserSettingsLocationSetToGps()){
                     val futureLocationViaGps = locationService.startGettingLocationViaGps()
                     futureLocationViaGps.observe(viewLifecycleOwner) {
@@ -106,6 +99,7 @@ class MainFragment : Fragment() {
                     val latLng = weatherInfoViewModel.getMapLatLng()
                     fetchInitialData(latLng.latitude, latLng.longitude)
                     displayAddress(latLng.latitude,latLng.longitude)
+
                 }
 
             }
