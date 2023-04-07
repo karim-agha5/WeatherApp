@@ -9,15 +9,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.databinding.FragmentDailyForecastBinding
 import com.example.weatherapp.ui.adapter.DailyWeatherAdapter
+import com.example.weatherapp.util.Converter
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 
 class DailyForecastFragment : Fragment() {
 
     private lateinit var binding: FragmentDailyForecastBinding
     private lateinit var weatherInfoViewModel: WeatherInfoViewModel
+    private val settingsManager by lazy {
+        SettingsManager.getInstance(requireContext())
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -42,9 +47,11 @@ class DailyForecastFragment : Fragment() {
         * The Activity is responsible for providing the lat, lon of the location.
         * */
         weatherInfoViewModel.weatherOneCallResponse.observe(viewLifecycleOwner, Observer {
-            val adapter = DailyWeatherAdapter()
+            val adapter = DailyWeatherAdapter(settingsManager,requireActivity())
             binding.dailyWeatherAdapter = adapter
             adapter.submitList(it.dailyForecast)
         })
     }
+
+
 }

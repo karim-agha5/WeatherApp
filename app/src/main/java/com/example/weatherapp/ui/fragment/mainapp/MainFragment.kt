@@ -22,14 +22,10 @@ import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.util.getCDegreeFormat
 import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
-import com.example.weatherapp.util.LOCATION_PERMISSION_GRANTED_REQUEST_CODE
-import com.example.weatherapp.util.LocationPermissionManager
-import com.example.weatherapp.util.TAG
+import com.example.weatherapp.util.*
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
-import com.google.android.gms.maps.model.LatLng
 
 
 class MainFragment : Fragment() {
@@ -43,21 +39,10 @@ class MainFragment : Fragment() {
     private val settingsManager by lazy {
         SettingsManager.getInstance(requireContext())
     }
-    private val egLat: String by lazy{"24.0889"}
-    private val egLon: String by lazy{"32.8998"}
-    private var lat: Double = 0.0
-    private var lon: Double = 0.0
+    private var weatherDegree: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*if(settingsManager.isUserSettingsLocationSetToGps()){
-            if(ActivityCompat.checkSelfPermission(requireActivity(),Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
-                findNavController().navigate(R.id.action_mainFragment_to_noLocationPermissionFragment2)
-            }
-        }*/
-
-
     }
 
     override fun onCreateView(
@@ -76,6 +61,9 @@ class MainFragment : Fragment() {
         loadCollapsingToolbarImage()
         locationPermissionManager = setupLocationPermissionManager(view)
        // locationPermissionManager.requestLocationPermission()
+
+        //TODO UPDATE DATA WHEN SETTINGS CHANGE
+//        updateData()
 
 
         /*
@@ -110,6 +98,40 @@ class MainFragment : Fragment() {
 
     }
 
+
+    private fun updateData(temp: Double){
+        convertData(temp)
+        updateLayout()
+    }
+
+    private fun convertData(temp: Double){
+        weatherDegree = when{
+            settingsManager
+                .isUserSettingsTemperatureSetToCelsius() ->
+                Converter.kelvinToCelsius(temp)
+
+            settingsManager
+                .isUserSettingsTemperatureSetToFahrenheit() ->
+                Converter.kelvinToFahrenheit(temp)
+
+            else -> temp
+        }
+    }
+
+    private fun updateLayout(){
+        when{
+            settingsManager
+                .isUserSettingsTemperatureSetToCelsius() ->
+                binding.tvWeatherDegree.text = getTemperatureUnit(weatherDegree.toInt(), CELSIUS)
+
+            settingsManager
+                .isUserSettingsTemperatureSetToFahrenheit() ->
+                binding.tvWeatherDegree.text = getTemperatureUnit(weatherDegree.toInt(), FAHRENHEIT)
+
+            else -> binding.tvWeatherDegree.text = getTemperatureUnit(weatherDegree.toInt(), KELVIN)
+
+        }
+    }
 
     private fun setupLocationPermissionManager(view: View) : LocationPermissionManager{
         return LocationPermissionManager(
@@ -149,10 +171,12 @@ class MainFragment : Fragment() {
         requireActivity().runOnUiThread {
             val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(lat.toString(),lon.toString())
             weatherOneCallResponse.observe(viewLifecycleOwner) {
-                binding.tvWeatherDegree.text = getCDegreeFormat((it.currentWeatherDetailedInfo.temp - 273.15).toFloat())
+               // binding.tvWeatherDegree.text = getCDegreeFormat((it.currentWeatherDetailedInfo.temp - 273.15).toFloat())
+               // weatherDegree = it.currentWeatherDetailedInfo.temp.toDouble()
                 // set the selected weather to today's weather info so it can be displayed in the details fragment
                 binding?.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
                 binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
+                updateData(it.currentWeatherDetailedInfo.temp.toDouble())
             }
         }
     }
@@ -198,8 +222,6 @@ class MainFragment : Fragment() {
     }
 
     private fun setUpTabLayoutFunctionality(){
-       /* binding.viewPager.adapter =
-            ViewPagerAdapter(requireActivity().supportFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)*/
         binding.viewPager.adapter =
             ViewPagerAdapter(childFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         binding.tabLayout.setupWithViewPager(binding.viewPager)
