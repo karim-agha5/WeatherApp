@@ -38,15 +38,16 @@ class UnableToFindALocationFragment : Fragment() {
         setupNavigationConfig()
         btnOpenUpTheMap = view.findViewById(R.id.btn_open_up_the_map)
         btnOpenUpTheMap.setOnClickListener {
-            findNavController().navigate(R.id.addLocationFragment)
+           // findNavController().navigate(R.id.addLocationFragment)
+            findNavController().navigate(R.id.action_unableToFindALocationFragment_to_addLocationFragment)
         }
-        findNavController()
+       /* findNavController()
             .currentBackStackEntry
             ?.savedStateHandle
             ?.getLiveData<String>("key")
             ?.observe(viewLifecycleOwner){
                 Log.i(TAG, "${this@UnableToFindALocationFragment.javaClass.simpleName} : $it")
-            }
+            }*/
     }
 
     private fun setupNavigationConfig(){

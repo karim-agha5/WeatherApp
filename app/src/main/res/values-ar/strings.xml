@@ -13,4 +13,5 @@
     <string name="pin">Pin</string>
     <string name="favorite">Favorite</string>
     <string name="today">Today</string>
+    <string name="remove">Remove</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.weatherapp.ui.fragment.mainapp
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,10 +16,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.room.WeatherDatabase
+import com.example.weatherapp.data.source.local.room.WeatherOneCallResponseDao
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.databinding.FragmentMainBinding
@@ -26,6 +30,8 @@ import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 import com.example.weatherapp.util.*
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainFragment : Fragment() {
@@ -87,7 +93,6 @@ class MainFragment : Fragment() {
                     val latLng = weatherInfoViewModel.getMapLatLng()
                     fetchInitialData(latLng.latitude, latLng.longitude)
                     displayAddress(latLng.latitude,latLng.longitude)
-
                 }
 
             }
@@ -166,7 +171,15 @@ class MainFragment : Fragment() {
     }
 
     private fun fetchInitialData(lat: Double ,lon: Double){
-        Log.i(TAG, "fetchInitialData: $lat \n $lon")
+        var dao: WeatherOneCallResponseDao? = null
+        var isInserted = false
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val weatherDatabase = WeatherDatabase.getInstance(requireContext())
+            dao = weatherDatabase.getWeatherOneCallResponseDao()
+        }
+
+
         // Run it on the UI thread because it's not possible to observe on a background thread.
         requireActivity().runOnUiThread {
             val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(lat.toString(),lon.toString())
@@ -177,8 +190,19 @@ class MainFragment : Fragment() {
                 binding?.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
                 binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
                 updateData(it.currentWeatherDetailedInfo.temp.toDouble())
+                lifecycleScope.launch(Dispatchers.IO) {
+                   if(it.lon != 0.0 && it.lat != 0.0){
+                       try{
+                        //   dao?.insertFavoriteLocation(it)
+                       }catch (ex: SQLiteConstraintException){
+                           Log.i(TAG, "exception -> {${it.lat},${it.lon}}")
+                       }
+                   }
+                }
             }
         }
+
+
     }
 
     private fun displayAddress(lat: Double,lon: Double){

@@ -47,4 +47,8 @@
     <string name="favorite">Favorite</string>
     <string name="dismiss">Dismiss</string>
     <string name="today">Today</string>
+    <string name="remove">Remove</string>
+    <string name="alert_dialog_location_removal_title">Remove this location</string>
+    <string name="alert_dialog_location_removal_message">Are you sure you want to remove this location ?</string>
+    <string name="cancel">cancel</string>
 </resources>

@@ -1,24 +1,26 @@
 package com.example.weatherapp.ui.fragment.mainapp
 
-import android.graphics.drawable.Drawable
 import android.location.Address
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.ui.activity.MainActivity
+import com.example.weatherapp.util.LAT_LNG_FROM_ADD_LOCATION_FRAGMENT_KEY
 import com.example.weatherapp.util.TAG
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,14 +40,10 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
     private var marker: Marker? = null
     private lateinit var navController: NavController
     private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
-    private val locationService: LocationService by lazy {
-        LocationService(requireContext().applicationContext)
-    }
-    private val settingsManager by lazy {
-        SettingsManager.getInstance(requireContext().applicationContext)
-    }
-
     private lateinit var currentLocationLatLng: LatLng
+    private val args: AddLocationFragmentArgs by navArgs()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -71,7 +69,6 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
         }
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
-
     }
 
     private fun setupNavigationConfig(){
@@ -105,12 +102,22 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
 
         mMap.setOnMapClickListener { latLng ->
 
+
+            if(args.from == FavoriteFragment::class.java.simpleName){
+                FavoriteBottomSheetFragment().show(childFragmentManager,"newFavoriteBottomSheet")
+            }
+            else{
+                val sheet = BottomNavigationSheetFragment()
+                sheet.setAddLocationFragment(this)
+                sheet.show(childFragmentManager,"newPinTag")
+            }
+
             currentLocationLatLng = latLng
             marker?.position = latLng
+            // Send this LatLng to observers
+            weatherInfoViewModel.setMapLatLng(latLng)
 
-            val sheet = BottomNavigationSheetFragment()
-            sheet.setAddLocationFragment(this)
-            sheet.show(childFragmentManager,"newPinTag")
+
 
         }
     }
@@ -119,12 +126,6 @@ class AddLocationFragment : Fragment(),OnMapReadyCallback{
         weatherInfoViewModel.setMapLatLng(currentLocationLatLng)
         findNavController().navigate(R.id.action_addLocationFragment_to_mainFragment)
         findNavController().graph.setStartDestination(R.id.mainFragment)
-
-
-       /* val fm = (requireParentFragment() as NavHostFragment).childFragmentManager
-        fm.fragments.forEachIndexed { index, fragment ->
-            Log.d(TAG, "Fragment $index: ${fragment.javaClass.simpleName}")
-        }*/
     }
     fun getLatLng() : LatLng = currentLocationLatLng
 

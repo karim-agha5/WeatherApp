@@ -12,35 +12,6 @@
         android:layout_height="wrap_content"
         tools:context=".ui.fragment.mainapp.BottomNavigationSheetFragment">
 
-<!--
-
-        <TextView
-            android:id="@+id/tv_bottom_navigation_sheet_country_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Alexandria, Egypt"
-            android:textSize="28sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/noto_sans_sc_medium"
-            android:paddingTop="30dp"
-            android:paddingBottom="10dp"
-            android:paddingStart="30dp"
-            android:includeFontPadding="false"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <TextView
-            android:id="@+id/tv_bottom_navigation_sheet_subadmin_area"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Foaad St,"
-            android:textSize="20sp"
-            android:textColor="@color/dark_grey"
-            android:paddingStart="30dp"
-            android:paddingBottom="22dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_bottom_navigation_sheet_country_name"/>
-
--->
 
         <Button
             android:id="@+id/btn_bottom_navigation_sheet_pin"
