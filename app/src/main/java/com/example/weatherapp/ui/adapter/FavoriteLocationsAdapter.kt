@@ -11,13 +11,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.remote.response.WeatherOneCallResponse
 import com.example.weatherapp.databinding.FavoriteLocationItemBinding
+import com.example.weatherapp.ui.fragment.mainapp.FavoriteFragment
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 
 class FavoriteLocationsAdapter(
     private var favoriteLocationsList: MutableList<WeatherOneCallResponse>,
     private val context: Context,
     private val weatherInfoViewModel: WeatherInfoViewModel,
-    private var locationsAddresses: MutableList<Address?>
+    private var locationsAddresses: MutableList<Address?>,
+    private val favoriteFragment: FavoriteFragment
 ) : RecyclerView.Adapter<FavoriteLocationsAdapter.CustomViewHolder>() {
 
 
@@ -38,6 +40,10 @@ class FavoriteLocationsAdapter(
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         displayLocationAddress(holder,locationsAddresses, position)
         handleMoreVertButtonClick(holder, position)
+        holder.binding.cvFavoriteLocationItem.setOnClickListener {
+            weatherInfoViewModel.setWeatherOneCallResponseToDisplay(favoriteLocationsList[position])
+            favoriteFragment.navigateToMainFragment()
+        }
     }
 
     override fun getItemCount(): Int {
@@ -49,20 +55,31 @@ class FavoriteLocationsAdapter(
         locationsAddresses: MutableList<Address?>,
         position: Int
     ) {
-        if (locationsAddresses.size != 0) {
-            var address = ""
-            if (locationsAddresses?.get(position)?.subAdminArea?.isNotEmpty() == true
-                && locationsAddresses?.get(position)?.subAdminArea?.isNotBlank() == true
-            ) {
-                address = "${locationsAddresses?.get(position)?.subAdminArea ?: ""}\n"
-            }
 
-            address += "${locationsAddresses?.get(position)?.adminArea ?: ""}, "
-            address += locationsAddresses?.get(position)?.countryName ?: ""
+       if(favoriteLocationsList[position].customAddress.subAdminArea != "Failed to get Address"){
+           var address  = "${favoriteLocationsList[position].customAddress.subAdminArea}\n"
+           address += "${favoriteLocationsList[position].customAddress.adminArea}, "
+           address += favoriteLocationsList[position].customAddress.countryName
+           holder.binding.tvFavoriteLocationItemName.apply {
+               this.text = address
+           }
+       }
+        else{
+           if (locationsAddresses.size != 0) {
+               var address = ""
+               if (locationsAddresses?.get(position)?.subAdminArea?.isNotEmpty() == true
+                   && locationsAddresses?.get(position)?.subAdminArea?.isNotBlank() == true
+               ) {
+                   address = "${locationsAddresses?.get(position)?.subAdminArea ?: ""}\n"
+               }
 
-            holder.binding.tvFavoriteLocationItemName.apply {
-                this.text = address
-            }
+               address += "${locationsAddresses?.get(position)?.adminArea ?: ""}, "
+               address += locationsAddresses?.get(position)?.countryName ?: ""
+
+               holder.binding.tvFavoriteLocationItemName.apply {
+                   this.text = address
+               }
+           }
         }
     }
 

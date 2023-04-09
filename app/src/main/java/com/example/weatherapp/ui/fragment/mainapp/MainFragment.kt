@@ -2,7 +2,6 @@ package com.example.weatherapp.ui.fragment.mainapp
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,23 +14,21 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.*
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
-import com.example.weatherapp.data.source.local.room.WeatherDatabase
-import com.example.weatherapp.data.source.local.room.WeatherOneCallResponseDao
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
+import com.example.weatherapp.data.source.remote.response.WeatherOneCallResponse
+import com.example.weatherapp.data.source.remote.response.dataclass.CustomAddress
+import com.example.weatherapp.data.source.remote.response.dataclass.Main
 import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.databinding.FragmentMainBinding
 import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.ui.adapter.ViewPagerAdapter
 import com.example.weatherapp.util.*
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class MainFragment : Fragment() {
@@ -39,12 +36,14 @@ class MainFragment : Fragment() {
     private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
     private lateinit var locationPermissionManager: LocationPermissionManager
+    private var navigatedFrom: String = "N/A"
     private val locationService by lazy {
         LocationService(requireActivity())
     }
     private val settingsManager by lazy {
         SettingsManager.getInstance(requireContext())
     }
+    private val args: MainFragmentArgs by navArgs()
     private var weatherDegree: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +54,7 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false)
-      //  binding.lifecycleOwner = this
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -66,51 +64,79 @@ class MainFragment : Fragment() {
         binding.viewmodel = weatherInfoViewModel
         loadCollapsingToolbarImage()
         locationPermissionManager = setupLocationPermissionManager(view)
-       // locationPermissionManager.requestLocationPermission()
-
-        //TODO UPDATE DATA WHEN SETTINGS CHANGE
-//        updateData()
-
-
-        /*
-        * Check if the location permission is given or not.
-        * If given, fetch the weather data from the API using either the GPS or google maps
-        * depending on the current user settings.
-        * */
-            if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if(settingsManager.isUserSettingsLocationSetToGps()){
-                    val futureLocationViaGps = locationService.startGettingLocationViaGps()
-                    futureLocationViaGps.observe(viewLifecycleOwner) {
-                        // Sometimes the location returned is null. So a nullability check is needed.
-                        if(it != null){
-                            fetchInitialData(it.latitude,it.longitude)
-                            displayAddress(it.latitude,it.longitude)
-                        }
-                    }
-                }
-
-                if (settingsManager.isUserSettingsLocationSetToMap()){
-                    val latLng = weatherInfoViewModel.getMapLatLng()
-                    fetchInitialData(latLng.latitude, latLng.longitude)
-                    displayAddress(latLng.latitude,latLng.longitude)
-                }
-
-            }
+        // locationPermissionManager.requestLocationPermission()
 
         setUpTabLayoutFunctionality()
         setupNavigationConfig()
 
 
+
+
+        if (args.displayData == FavoriteFragment::class.java.simpleName) {
+            navigatedFrom = FavoriteFragment::class.java.simpleName
+            val weatherOneCallResponse = weatherInfoViewModel.getWeatherOneCallResponseToDisplay()
+            binding?.viewmodel?.setSelectedWeatherInfo(weatherOneCallResponse.dailyForecast[0])
+            if (weatherOneCallResponse != null) {
+                displayData(weatherOneCallResponse)
+            }
+            displayAddressData(weatherOneCallResponse?.customAddress ?: CustomAddress("","",""))
+        }
+
+
+        else {
+
+            /*
+          * Check if the location permission is given or not.
+          * If given, fetch the weather data from the API using either the GPS or google maps
+          * depending on the current user settings.
+          * */
+            if (ActivityCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (settingsManager.isUserSettingsLocationSetToGps()) {
+                    val futureLocationViaGps = locationService.startGettingLocationViaGps()
+                    futureLocationViaGps.observe(viewLifecycleOwner) {
+                        // Sometimes the location returned is null. So a nullability check is needed.
+                        if (it != null) {
+                            fetchRemoteData(it.latitude, it.longitude)
+                            displayAddressRemote(it.latitude, it.longitude)
+                        }
+                    }
+                }
+
+                if (settingsManager.isUserSettingsLocationSetToMap()) {
+                    val latLng = weatherInfoViewModel.getMapLatLng()
+                    fetchRemoteData(latLng.latitude, latLng.longitude)
+                    displayAddressRemote(latLng.latitude, latLng.longitude)
+                }
+
+            }
+
+        }
+
+
+
     }
 
+    private fun isConnected(): Boolean {
+        var connected = false
+        val info = (requireActivity() as MainActivity).connectivityManager.activeNetworkInfo
+        connected = info != null && info.isAvailable && info.isConnected
 
-    private fun updateData(temp: Double){
+        return connected
+    }
+
+    fun getNavigatedFrom() = navigatedFrom
+
+    private fun updateData(temp: Double) {
         convertData(temp)
         updateLayout()
     }
 
-    private fun convertData(temp: Double){
-        weatherDegree = when{
+    private fun convertData(temp: Double) {
+        weatherDegree = when {
             settingsManager
                 .isUserSettingsTemperatureSetToCelsius() ->
                 Converter.kelvinToCelsius(temp)
@@ -123,8 +149,8 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun updateLayout(){
-        when{
+    private fun updateLayout() {
+        when {
             settingsManager
                 .isUserSettingsTemperatureSetToCelsius() ->
                 binding.tvWeatherDegree.text = getTemperatureUnit(weatherDegree.toInt(), CELSIUS)
@@ -138,26 +164,29 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun setupLocationPermissionManager(view: View) : LocationPermissionManager{
+    private fun setupLocationPermissionManager(view: View): LocationPermissionManager {
         return LocationPermissionManager(
-                requireActivity(),
-                view,
-                this::onLocationPermissionGranted,
-                this::onLocationPermissionDenied,
-                this::onGoToSettingsClick,
-                LOCATION_PERMISSION_GRANTED_REQUEST_CODE
-            )
+            requireActivity(),
+            view,
+            this::onLocationPermissionGranted,
+            this::onLocationPermissionDenied,
+            this::onGoToSettingsClick,
+            LOCATION_PERMISSION_GRANTED_REQUEST_CODE
+        )
     }
 
-    private fun setupNavigationConfig(){
+    private fun setupNavigationConfig() {
         val appBarConfiguration =
-            AppBarConfiguration(findNavController().graph,(activity as MainActivity).mainActivityBinding.drawerLayout)
+            AppBarConfiguration(
+                findNavController().graph,
+                (activity as MainActivity).mainActivityBinding.drawerLayout
+            )
 
         /*
         * This should transform the hamburger icon to the back button
         * if a non top-level destination is on top of the stack
         * */
-        binding.toolbar.setupWithNavController(findNavController(),appBarConfiguration)
+        binding.toolbar.setupWithNavController(findNavController(), appBarConfiguration)
 
         // Adds another Hamburger icon because the default one is black and it's not fully visible to the eye
         binding.toolbar.setNavigationIcon(R.drawable.round_menu_24)
@@ -166,48 +195,39 @@ class MainFragment : Fragment() {
         * Attaches the nav controller to the navigation view to enable the navigation among fragments
         * through the menu items
         * */
-        (activity as MainActivity).mainActivityBinding.navigationView.setupWithNavController(findNavController())
+        (activity as MainActivity).mainActivityBinding.navigationView.setupWithNavController(
+            findNavController()
+        )
 
     }
 
-    private fun fetchInitialData(lat: Double ,lon: Double){
-        var dao: WeatherOneCallResponseDao? = null
-        var isInserted = false
+    private fun displayData(weatherOneCallResponse: WeatherOneCallResponse) {
+        binding.tvWeatherStatus.text =
+            weatherOneCallResponse.currentWeatherDetailedInfo.weatherList[0].main
+        binding?.viewmodel?.setSelectedWeatherInfo(weatherOneCallResponse.dailyForecast[0])
+        binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(weatherOneCallResponse.twoDaysHourlyForecast)
+        updateData(weatherOneCallResponse.currentWeatherDetailedInfo.temp.toDouble())
+    }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val weatherDatabase = WeatherDatabase.getInstance(requireContext())
-            dao = weatherDatabase.getWeatherOneCallResponseDao()
-        }
-
-
+    private fun fetchRemoteData(lat: Double, lon: Double) {
         // Run it on the UI thread because it's not possible to observe on a background thread.
         requireActivity().runOnUiThread {
-            val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(lat.toString(),lon.toString())
+            val weatherOneCallResponse =
+                weatherInfoViewModel.weatherOneCall(lat.toString(), lon.toString())
             weatherOneCallResponse.observe(viewLifecycleOwner) {
-               // binding.tvWeatherDegree.text = getCDegreeFormat((it.currentWeatherDetailedInfo.temp - 273.15).toFloat())
-               // weatherDegree = it.currentWeatherDetailedInfo.temp.toDouble()
                 // set the selected weather to today's weather info so it can be displayed in the details fragment
-                binding?.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
-                binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
-                updateData(it.currentWeatherDetailedInfo.temp.toDouble())
-                lifecycleScope.launch(Dispatchers.IO) {
-                   if(it.lon != 0.0 && it.lat != 0.0){
-                       try{
-                        //   dao?.insertFavoriteLocation(it)
-                       }catch (ex: SQLiteConstraintException){
-                           Log.i(TAG, "exception -> {${it.lat},${it.lon}}")
-                       }
-                   }
-                }
+                /* binding?.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
+                 binding?.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
+                 updateData(it.currentWeatherDetailedInfo.temp.toDouble())*/
+                displayData(it)
             }
         }
-
-
     }
 
-    private fun displayAddress(lat: Double,lon: Double){
+    private fun displayAddressRemote(lat: Double, lon: Double) {
         val futureAddress = weatherInfoViewModel.getAddress(lat, lon)
-        futureAddress.observe(viewLifecycleOwner, Observer {
+        futureAddress.observe(viewLifecycleOwner) {
+/*
             var address = ""
             if(it?.get(0)?.subAdminArea?.isNotEmpty() == true
                 && it?.get(0)?.subAdminArea?.isNotBlank() == true){
@@ -219,15 +239,51 @@ class MainFragment : Fragment() {
 
             binding.tvWeatherLocation.apply {
                 this.text = address
+            }*/
+
+
+            if (it == null) {
+                displayAddressData(CustomAddress("Unknwon", "Unknown", "Unknown"))
+            } else {
+
+                var customAddress = CustomAddress("", "", "")
+
+                if (it?.get(0)?.subAdminArea?.isNotEmpty() == true
+                    && it?.get(0)?.subAdminArea?.isNotBlank() == true
+                ) {
+                    customAddress.subAdminArea = it?.get(0)?.subAdminArea ?: "Unknown"
+                }
+
+                customAddress.adminArea = it?.get(0)?.adminArea ?: "Unknown"
+                customAddress.countryName = it?.get(0)?.countryName ?: "Unknown"
+
+                displayAddressData(customAddress)
+
             }
 
-        })
+
+        }
     }
 
-    private fun loadCollapsingToolbarImage(){
+    private fun displayAddressData(customAddress: CustomAddress) {
+        var address = "${customAddress.subAdminArea}\n"
+        address += "${customAddress.adminArea}, "
+        address += customAddress.countryName
+        binding.tvWeatherLocation.apply {
+            this.text = address
+        }
+    }
+
+    private fun loadCollapsingToolbarImage() {
         Glide
             .with(this)
-            .load(ResourcesCompat.getDrawable(resources, R.drawable.ice_snowy_landscape,activity?.theme))
+            .load(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ice_snowy_landscape,
+                    activity?.theme
+                )
+            )
             .into(binding.ivCollapsingImage)
     }
 
@@ -235,7 +291,7 @@ class MainFragment : Fragment() {
     /*
     * Sets the custom toolbar as the Appbar along with its components
     * */
-    private fun setupSupportActionBar(){
+    private fun setupSupportActionBar() {
         (activity as MainActivity).setSupportActionBar(binding.toolbar)
         val supportActionBar = (activity as MainActivity).supportActionBar
         supportActionBar?.setHomeAsUpIndicator(R.drawable.round_menu_24)
@@ -245,11 +301,13 @@ class MainFragment : Fragment() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun setUpTabLayoutFunctionality(){
+    private fun setUpTabLayoutFunctionality() {
         binding.viewPager.adapter =
-            ViewPagerAdapter(childFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+            ViewPagerAdapter(
+                childFragmentManager,
+                FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+            )
         binding.tabLayout.setupWithViewPager(binding.viewPager)
-
     }
 
 
@@ -258,15 +316,15 @@ class MainFragment : Fragment() {
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
-    private fun onLocationPermissionGranted(){
-      //  fetchInitialData()
+    private fun onLocationPermissionGranted() {
+        //  fetchInitialData()
     }
 
-    private fun onLocationPermissionDenied(){
+    private fun onLocationPermissionDenied() {
         findNavController().navigate(R.id.noLocationPermissionFragment)
     }
 
-    private fun onGoToSettingsClick(){
+    private fun onGoToSettingsClick() {
         // Not really needed
     }
 

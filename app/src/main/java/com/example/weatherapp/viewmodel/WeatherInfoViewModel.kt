@@ -8,6 +8,7 @@ import androidx.lifecycle.*
 import com.example.weatherapp.data.repository.WeatherRepository
 import com.example.weatherapp.data.source.remote.response.WeatherOneCallResponse
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
+import com.example.weatherapp.data.source.remote.response.dataclass.CustomAddress
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
 import com.example.weatherapp.data.source.remote.service.LocationService
 import com.example.weatherapp.data.source.remote.service.RetrofitWeatherNetwork
@@ -18,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.util.*
 
 class WeatherInfoViewModel(application: Application) : AndroidViewModel(application) {
@@ -33,6 +35,7 @@ class WeatherInfoViewModel(application: Application) : AndroidViewModel(applicat
         MutableLiveData()
     private val _address: MutableLiveData<MutableList<Address>?> = MutableLiveData()
     private var mapLatLng: LatLng = LatLng(0.0, 0.0)
+    private lateinit var weatherOneCallResponseToDisplay: WeatherOneCallResponse
     var weatherOneCallResponse: LiveData<WeatherOneCallResponse> = _weatherOneCallResponse
     val selectedWeatherInfo: LiveData<DailyWeatherInfo> = _selectedWeatherInfo
     val selectedListOfWeatherHourlyInfo: LiveData<List<HourlyWeatherInfo>> =
@@ -50,7 +53,7 @@ class WeatherInfoViewModel(application: Application) : AndroidViewModel(applicat
     fun getAddress(lat: Double, lon: Double): LiveData<MutableList<Address>?> {
         viewModelScope.launch(Dispatchers.IO) {
             var list: MutableList<Address>? = locationService.getAddresses(lat, lon)
-            if (list?.size == 0) list = null // Prevents ArrayIndexOutOfBoundsException
+            if (list == null || list?.size == 0) list = null // Prevents ArrayIndexOutOfBoundsException
             _address.postValue(list)
         }
         return address
@@ -96,6 +99,20 @@ class WeatherInfoViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch(Dispatchers.IO) {
             val weatherOneCallResponse =
                 weatherRepository.weatherOneCall(latLng.latitude.toString(),latLng.longitude.toString())
+
+            val futureAddress = Geocoder(getApplication<Application>().applicationContext, Locale.getDefault())
+                .getFromLocation(latLng.latitude,latLng.longitude,1)
+            var customAddress = CustomAddress("Failed to get Address","","")
+            try{
+                val customAddress = CustomAddress(
+                    futureAddress?.get(0)?.subAdminArea ?: "Unknown",
+                    futureAddress?.get(0)?.adminArea ?: "Unknown",
+                    futureAddress?.get(0)?.countryName ?: "Unknown"
+                )
+            }catch (e: IOException){
+                Log.i(TAG, "${this::class.java.simpleName} - insertFavoriteLocation()")
+            }
+            weatherOneCallResponse.customAddress = customAddress
             weatherRepository.insertFavoriteLocation(weatherOneCallResponse)
         }
     }
@@ -105,4 +122,10 @@ class WeatherInfoViewModel(application: Application) : AndroidViewModel(applicat
             weatherRepository.deleteFavoriteLocation(weatherOneCallResponse)
         }
     }
+
+    fun setWeatherOneCallResponseToDisplay(weatherOneCallResponse: WeatherOneCallResponse){
+        weatherOneCallResponseToDisplay = weatherOneCallResponse
+    }
+
+    fun getWeatherOneCallResponseToDisplay() = weatherOneCallResponseToDisplay
 }

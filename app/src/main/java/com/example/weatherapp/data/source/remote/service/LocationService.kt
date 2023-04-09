@@ -5,10 +5,14 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.example.weatherapp.util.TAG
 import com.google.android.gms.location.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import java.io.IOException
 import java.util.*
 
 class LocationService(context: Context) {
@@ -48,10 +52,15 @@ class LocationService(context: Context) {
      * @return mutable list of addresses that may or may not contain any addresses.
      * There's no guarantee that his method returns accurate or any address at all.
      * */
+    @Throws(IOException::class)
     suspend fun getAddresses(lat: Double,lon: Double) : MutableList<Address>? = withContext(Dispatchers.IO){
-        return@withContext geocoder.getFromLocation(lat,lon,1)
-        //  return geocoder.getFromLocation(lat,lon,1)
+        //return@withContext geocoder.getFromLocation(lat,lon,1)
+        try{
+            return@withContext geocoder.getFromLocation(lat,lon,1)
+        }catch (e: IOException){
+            Log.i(TAG, "${this::class.java.simpleName} - getAddresses: ")
+            return@withContext null
+        }
     }
-
 
 }

@@ -14,4 +14,5 @@
     <string name="favorite">Favorite</string>
     <string name="today">Today</string>
     <string name="remove">Remove</string>
+    <string name="no_internet_message">You\'re not connected to the internet</string>
 </resources>

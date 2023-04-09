@@ -7,11 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.SavedStateViewModelFactory
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -31,7 +28,6 @@ import kotlinx.coroutines.launch
 
 class FavoriteFragment : Fragment() {
 
-    private lateinit var toolbar: Toolbar
     private lateinit var binding: FragmentFavoriteBinding
     private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
     private lateinit var weatherDatabase: WeatherDatabase
@@ -76,6 +72,16 @@ class FavoriteFragment : Fragment() {
             lifecycleScope.launch(Dispatchers.IO){
                 try{
                     addresses = weatherInfoViewModel.getAddresses(locationsList)
+                    for(i in addresses.indices){
+                        if(it[i].customAddress.subAdminArea == "Failed to get Address"){
+                            if(addresses?.get(i)?.countryName?.isNotBlank() == true &&
+                                    addresses?.get(i)?.countryName?.isNotEmpty() == true){
+                                it[i].customAddress.subAdminArea = addresses?.get(i)?.subAdminArea ?: ""
+                                it[i].customAddress.adminArea = addresses?.get(i)?.adminArea ?: ""
+                                it[i].customAddress.subAdminArea = addresses?.get(i)?.countryName ?: ""
+                            }
+                        }
+                    }
                 }catch (ex: Exception){
                     Log.i(TAG, "cannot fetch addresses")
                 }
@@ -84,7 +90,8 @@ class FavoriteFragment : Fragment() {
                         it.toMutableList(),
                         requireContext(),
                         weatherInfoViewModel,
-                        addresses
+                        addresses,
+                        this@FavoriteFragment
                     )
                 binding.adapter = adapter
             }
@@ -107,6 +114,12 @@ class FavoriteFragment : Fragment() {
 
     }
 
+    fun navigateToMainFragment(){
+        val action =
+            FavoriteFragmentDirections.actionFavoriteFragmentToMainFragment(FavoriteFragment::class.java.simpleName)
+        findNavController().navigate(action)
+        findNavController().graph.setStartDestination(R.id.mainFragment)
+    }
 
     private fun setupNavigationConfig() {
         val appBarConfiguration =

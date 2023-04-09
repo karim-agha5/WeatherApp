@@ -4,6 +4,7 @@ import androidx.room.Entity
 import com.example.weatherapp.data.source.remote.response.current.CurrentWeatherInfo
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.data.source.remote.response.dataclass.Alert
+import com.example.weatherapp.data.source.remote.response.dataclass.CustomAddress
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
 import com.google.gson.annotations.SerializedName
 
@@ -27,5 +28,6 @@ data class WeatherOneCallResponse(
     val twoDaysHourlyForecast: List<HourlyWeatherInfo>,
     @SerializedName("daily")
     val dailyForecast: List<DailyWeatherInfo>,
-    val alerts: List<Alert?>?
+    val alerts: List<Alert?>?,
+    var customAddress: CustomAddress
 )

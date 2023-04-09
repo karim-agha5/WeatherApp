@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.example.weatherapp.data.source.remote.response.current.CurrentWeatherInfo
 import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.data.source.remote.response.dataclass.Alert
+import com.example.weatherapp.data.source.remote.response.dataclass.CustomAddress
 import com.example.weatherapp.data.source.remote.response.dataclass.Rain
 import com.example.weatherapp.data.source.remote.response.dataclass.Weather
 import com.example.weatherapp.data.source.remote.response.hourly.HourlyWeatherInfo
@@ -33,17 +34,25 @@ class EntityConverter {
     }
 
     @TypeConverter
+    fun customAddressToString(customAddress: CustomAddress) : String{
+        val gson = Gson()
+        return gson.toJson(customAddress)
+    }
+
+    @TypeConverter
     fun alertsListToString(list: List<Alert?>?) : String{
         val gson = Gson()
-        /*if(list == null) {
-            return gson.toJson(listOf<Alert>())
-        }*/
         return gson.toJson(list)
     }
 
     @TypeConverter
     fun getCurrentWeatherInfoFromString(jsonString: String) : CurrentWeatherInfo{
         return Gson().fromJson(jsonString, object : TypeToken<CurrentWeatherInfo?>() {}.type)
+    }
+
+    @TypeConverter
+    fun getCustomAddressFromString(jsonString: String) : CustomAddress{
+        return Gson().fromJson(jsonString, object : TypeToken<CustomAddress>() {}.type)
     }
 
     @TypeConverter

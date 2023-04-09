@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationPermissionManager: LocationPermissionManager
 
     lateinit var mainActivityBinding: ActivityMainBinding
-    private val connectivityManager by lazy {
+    val connectivityManager by lazy {
         this.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
     }
 
@@ -61,9 +61,9 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         navController = navHost.navController
 
-        // pop main fragment off the stack because NoLocationPermissionFragment navigates to it
+       /* // pop main fragment off the stack because NoLocationPermissionFragment navigates to it
         navController.popBackStack()
-        navController.navigate(R.id.noLocationPermissionFragment)
+        navController.navigate(R.id.noLocationPermissionFragment)*/
 
         setupLocationPermissionManager(mainActivityBinding.root)
 
@@ -71,11 +71,19 @@ class MainActivity : AppCompatActivity() {
 
 
         if (isConnected()){
-
+            if(settingsManager.isUserSettingsLocationSetToGps()){
+                navController.popBackStack()
+                navController.navigate(R.id.mainFragment)
+                navController.graph.setStartDestination(R.id.mainFragment)
+            }
+            else{
+                navController.popBackStack()
+                navController.navigate(R.id.noLocationPermissionFragment)
+                navController.graph.setStartDestination(R.id.noLocationPermissionFragment)
+            }
         }
         else{
-            startActivity(Intent(this,ErrorActivity::class.java))
-            finish()
+
         }
 
 
@@ -111,21 +119,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
-
-    private fun onNetworkStatus(status: Boolean){
-        // onAvailable
-        if(status){
-        //    fetchInitialData()
-        }
-        // onLost
-        else{
-            startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
-            finish()
-        }
-
-    }
-
     private fun setupNetworkCheck(){
 
         val networkRequest =
@@ -143,32 +136,24 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                //Toast.makeText(this@MainActivity, "Available", Toast.LENGTH_SHORT).show() // works
-              //  Log.i(TAG, "onAvailable() AVAILABLE!")
-             //   fetchInitialData()
+                runOnUiThread {
+                    mainActivityBinding.navigationView.menu.findItem(R.id.addLocationFragment).isEnabled =
+                        true
+                }
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-               // Toast.makeText(this@MainActivity, "Lost Connection", Toast.LENGTH_SHORT).show() // works
-            //    Log.i(TAG, "onLost() LOST!!!!")
-                startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
-                finish()
+                runOnUiThread {
+                    navController.popBackStack()
+                    navController.navigate(R.id.noNetworkFragment)
+                    navController.graph.setStartDestination(R.id.noNetworkFragment)
+                }
             }
 
         }
 
         connectivityManager.requestNetwork(networkRequest,networkCallback)
-
-
-        if(isConnected()){
-            Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
-        //    Log.i(TAG, "isConnected(): CONNECTED")
-        }
-        else{
-            Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
-          //  Log.i(TAG, "isConnected(): DISCONNECTED")
-        }
 
     }
     private fun isConnected() : Boolean{
@@ -179,12 +164,6 @@ class MainActivity : AppCompatActivity() {
         return connected
     }
 
-  /*  private fun loadCollapsingToolbarImage(){
-        Glide
-            .with(this)
-            .load(ResourcesCompat.getDrawable(resources, R.drawable.ice_snowy_landscape,theme))
-            .into(mainActivityBinding.ivCollapsingImage)
-    }*/
 
     private fun initMainActivityBinding(){
         mainActivityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -219,10 +198,6 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == LOCATION_PERMISSION_GRANTED_REQUEST_CODE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                // handled by NoLocationPermissionFragment
-                /*navController.popBackStack()
-                navController.navigate(R.id.mainFragment)*/
-
 
                 if(settingsManager.isUserSettingsLocationSetToGps()){
                     navController.popBackStack()

@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoriteBottomSheetBinding
+import com.example.weatherapp.ui.activity.MainActivity
 import com.example.weatherapp.util.TAG
 import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -48,5 +49,12 @@ class FavoriteBottomSheetFragment : BottomSheetDialogFragment() {
         binding.btnFavoriteBottomNavigationSheetDismiss.setOnClickListener {
             dismissNow()
         }
+    }
+    private fun isConnected() : Boolean{
+        var connected = false
+        val info = (requireActivity() as MainActivity).connectivityManager.activeNetworkInfo
+        connected = info != null && info.isAvailable && info.isConnected
+
+        return connected
     }
 }
