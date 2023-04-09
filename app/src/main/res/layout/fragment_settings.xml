@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="mngr"
+            type="com.example.weatherapp.data.source.local.sharedpreference.SettingsManager" />
     </data>
 
     <ScrollView
@@ -58,7 +60,7 @@
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
                     android:layout_marginRight="24dp"
-                    android:checked="true" />
+                    android:checked="true"/>
 
 
                 <RadioButton
@@ -101,7 +103,7 @@
                     android:text="@string/celsius"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
-                    android:checked="true" />
+                    android:checked="true"/>
 
                 <RadioButton
                     android:id="@+id/rb_user_settings_kelvin"
@@ -109,7 +111,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/kelvin"
                     android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:checked="@{mngr.userSettingsTemperatureSetToKelvin}"/>
 
 
                 <RadioButton
@@ -118,7 +121,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/fahrenheit"
                     android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:checked="@{mngr.userSettingsTemperatureSetToFahrenheit}"/>
 
             </RadioGroup>
 

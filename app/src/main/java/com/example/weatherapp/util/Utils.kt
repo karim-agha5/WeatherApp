@@ -14,8 +14,10 @@ const val ONBOARDING_SHARED_PREFERENCE_KEY = "isOnBoardingFinished"
 const val INITIAL_USER_SETTINGS_SHARED_PREFERENCE_NAME = "userSettings"
 const val INITIAL_USER_SETTINGS_SHARED_PREFERENCE_KEY = "isInitialUserSettingsFinished"
 const val LOCATION_PERMISSION_GRANTED_REQUEST_CODE = 5
+const val LAT_LNG_FROM_ADD_LOCATION_FRAGMENT_KEY = "latLngFromAddLocationFragment"
 const val MAP_MARKER_LOCATION_KEY = "marker location"
 const val TAG = "Exception"
+
 
 private  val days = arrayOf(
     "Sunday",

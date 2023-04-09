@@ -227,8 +227,9 @@ class SettingsManager private constructor(val context: Context){
         ).apply()
     }
 
-    fun isUserSettingsLocationSetToGps() =
-        userSettingsSharedPreferencesContains(USER_SETTINGS_GPS_KEY)
+    fun isUserSettingsLocationSetToGps() : Boolean {
+        return userSettingsSharedPreferencesContains(USER_SETTINGS_GPS_KEY)
+    }
 
     fun isUserSettingsLocationSetToMap() =
         userSettingsSharedPreferencesContains(USER_SETTINGS_MAP_KEY)

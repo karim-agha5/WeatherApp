@@ -1,6 +1,7 @@
 package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,6 +18,10 @@ import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.databinding.FragmentSettingsBinding
 import com.example.weatherapp.ui.activity.MainActivity
+import com.example.weatherapp.util.TAG
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SettingsFragment : Fragment() {
 
@@ -40,6 +46,10 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupNavigationConfig()
+        //initialStateSetup()
+
+
+
         binding.btnUserSettingsDone.setOnClickListener {
             saveUserInitialSettings(view)
             if(settingsManager.isUserSettingsLocationSetToMap()){
@@ -71,6 +81,132 @@ class SettingsFragment : Fragment() {
 
     }
 
+    /*
+    * Sets which RadioButtons to be checked based on the latest saved settings.
+    * */
+    private fun initialStateSetup(){
+          var gps = false
+         var map = false
+         var cel = false
+         var kel = false
+         var fah = false
+         var meter = false
+         var mile = false
+         var arabic = false
+         var english = false
+         var isEnabled = false
+         lifecycleScope.launch(Dispatchers.IO) {
+            when {
+                //Location
+                settingsManager
+                    .isUserSettingsLocationSetToGps() -> gps = true
+                settingsManager
+                    .isUserSettingsLocationSetToMap() -> map = true
+
+                // Temperature
+                settingsManager
+                    .isUserSettingsTemperatureSetToCelsius() -> cel = true
+                settingsManager.isUserSettingsTemperatureSetToKelvin() -> kel = true
+                settingsManager.isUserSettingsTemperatureSetToFahrenheit() -> fah = true
+
+                // Wind Speed
+                settingsManager
+                    .isUserSettingsWindSpeedSetToMeterPerSec() -> meter = true
+                settingsManager
+                    .isUserSettingsWindSpeedSetToMilesPerHour() -> mile = true
+
+                // Language
+                settingsManager
+                    .isUserSettingsLanguageSetToArabic() -> arabic = true
+                settingsManager
+                    .isUserSettingsLanguageSetToEnglish() -> english = true
+
+                // Notifications
+                settingsManager
+                    .isUserSettingsNotificationsEnabled() -> isEnabled = true
+            }
+             withContext(Dispatchers.Main){
+                 when{
+                     // Location
+                     gps == true -> {
+                        /* binding.rbUserSettingsGps.isChecked = true
+                         binding.rbUserSettingsMap.isChecked = false*/
+                    //     Log.i(TAG, "gps $gps ")
+                     }
+
+                     map == true -> {
+                        /* binding.rbUserSettingsMap.isChecked = true
+                         binding.rbUserSettingsGps.isChecked = false*/
+                      //   Log.i(TAG, "map $map ")
+                     }
+
+
+                     // Temperature
+                     cel == true -> {
+                       /*  binding.rbUserSettingsCelsius.isChecked = true
+                         binding.rbUserSettingsKelvin.isChecked = false
+                         binding.rbUserSettingsFahrenheit.isChecked = false*/
+                         Log.i(TAG, "cel $cel ")
+                     }
+                     kel == true -> {
+                         /*binding.rbUserSettingsKelvin.isChecked = true
+                         binding.rbUserSettingsFahrenheit.isChecked = false
+                         binding.rbUserSettingsCelsius.isChecked = false*/
+                         Log.i(TAG, "kel $kel ")
+
+                     }
+                     fah == true -> {
+                        /* binding.rbUserSettingsFahrenheit.isChecked = true
+                         binding.rbUserSettingsCelsius.isChecked = false
+                         binding.rbUserSettingsKelvin.isChecked = false*/
+                         Log.i(TAG, "fah $fah ")
+                     }
+
+
+                     // Wind Speed
+                     meter == true -> {
+                        /* binding.rbUserSettingsMeterPerSec.isChecked = true
+                         binding.rbUserSettingsMilesPerHour.isChecked = false*/
+                         Log.i(TAG, "meter $meter ")
+                     }
+
+                     mile == true -> {
+                         /*binding.rbUserSettingsMilesPerHour.isChecked = true
+                         binding.rbUserSettingsMeterPerSec.isChecked = false*/
+                         Log.i(TAG, "mile $mile ")
+                     }
+
+
+                     // Language
+                     arabic == true -> {
+                        /* binding.rbUserSettingsArabic.isChecked = true
+                         binding.rbUserSettingsEnglish.isChecked = false*/
+                         Log.i(TAG, "arabic $arabic ")
+                     }
+
+                     english == true -> {
+                        /* binding.rbUserSettingsEnglish.isChecked = true
+                         binding.rbUserSettingsArabic.isChecked = false*/
+                         Log.i(TAG, "english $english ")
+                     }
+
+                     // Notifications
+                     isEnabled == true -> {
+                        /* binding.rbUserSettingsEnabled.isChecked = true
+                         binding.rbUserSettingsDisabled.isChecked = false*/
+                         Log.i(TAG, "isEnabled $isEnabled ")
+                     }
+
+                     isEnabled == false -> {
+                         /*binding.rbUserSettingsDisabled.isChecked = true
+                         binding.rbUserSettingsEnabled.isChecked = false*/
+                         Log.i(TAG, "disabled $isEnabled ")
+                     }
+                 }
+             }
+         }
+    }
+
     private fun navigateToUnableToFindLocationFragment(){
         findNavController().navigate(
             SettingsFragmentDirections.actionSettingsFragmentToUnableToFindALocationFragment()
@@ -99,7 +235,7 @@ class SettingsFragment : Fragment() {
             view.findViewById<RadioButton>(binding.rgUserSettingsLocation.checkedRadioButtonId)
         when(radioButton.text){
             resources.getString(R.string.gps) ->    settingsManager.setUserSettingsGpsEnabled()
-            else                              ->    settingsManager.setUserSettingsMapEnabled()
+            else  ->    settingsManager.setUserSettingsMapEnabled()
         }
     }
 
@@ -144,15 +280,5 @@ class SettingsFragment : Fragment() {
         }
     }
 
-
-
-    fun NavController.navigateUpOrFinish(activity: FragmentActivity): Boolean {
-        return if (navigateUp()) {
-            true
-        } else {
-            activity.finish()
-            true
-        }
-    }
 
 }

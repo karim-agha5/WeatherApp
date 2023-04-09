@@ -14,7 +14,11 @@ import com.example.weatherapp.data.source.remote.response.daily.DailyWeatherInfo
 import com.example.weatherapp.databinding.DailyWeatherItemBinding
 import com.example.weatherapp.util.*
 
-class DailyWeatherAdapter(val settingsManager: SettingsManager,private val context: Context)
+class DailyWeatherAdapter(
+    val settingsManager: SettingsManager,
+    val context: Context,
+    private val isConnected: Boolean
+)
     : ListAdapter<DailyWeatherInfo,DailyWeatherAdapter.CustomViewHolder>(DailyWeatherInfoDiffUtil()) {
 
     class CustomViewHolder(var binding: DailyWeatherItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -45,7 +49,12 @@ class DailyWeatherAdapter(val settingsManager: SettingsManager,private val conte
         val dt = holder.binding.dailyWeatherInfo?.dt?.times(fromSecondsToMillisConversionUnits)
         holder.binding.tvDailyWeatherItemDate.text = getDisplayedDate(dt ?: -1)
         if(position == 0){
-            holder.binding.tvDailyWeatherItemDay.text = context.getString(R.string.today)
+            if(isConnected){
+                holder.binding.tvDailyWeatherItemDay.text = context.getString(R.string.today)
+            }
+            else{
+                holder.binding.tvDailyWeatherItemDay.text = getWeekDay(dt ?: -1)
+            }
         }
         else {
             holder.binding.tvDailyWeatherItemDay.text = getWeekDay(dt ?: -1)

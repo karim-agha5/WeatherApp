@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.fragment.mainapp
 
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,35 +9,34 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.room.WeatherDatabase
+import com.example.weatherapp.data.source.local.room.WeatherOneCallResponseDao
 import com.example.weatherapp.databinding.FragmentBottomNavigationSheetBinding
 import com.example.weatherapp.util.TAG
+import com.example.weatherapp.viewmodel.WeatherInfoViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BottomNavigationSheetFragment : BottomSheetDialogFragment() {
 
-
+    private val weatherInfoViewModel: WeatherInfoViewModel by activityViewModels()
     private lateinit var btnPin: Button
     private lateinit var btnFavorite: Button
     private lateinit var btnDismiss: Button
-    private lateinit var tvCountryName: TextView
-    private lateinit var tvSubAdminArea: TextView
     private lateinit var binding: FragmentBottomNavigationSheetBinding
-   // private val args: BottomNavigationSheetFragmentArgs by navArgs()
-    private var lat: Double = 0.0
-    private var lon: Double = 0.0
-    private val liveLat: MutableLiveData<Double> = MutableLiveData(lat)
-    private val liveLon: MutableLiveData<Double> = MutableLiveData(lon)
     private lateinit var addLocationFragment: AddLocationFragment
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -62,33 +62,18 @@ class BottomNavigationSheetFragment : BottomSheetDialogFragment() {
 
 
 
-        /*   if(args.adminArea?.isBlank() == true){
-               if(args.countryName?.isBlank() == true){
-                   binding.tvBottomNavigationSheetCountryName.visibility = View.GONE
-               }
-               else{
-                   binding.tvBottomNavigationSheetCountryName.text = args.countryName
-               }
-           }
-           else if(args.adminArea?.isBlank() == false){
-               binding.tvBottomNavigationSheetCountryName.text = args.adminArea
-               binding.tvBottomNavigationSheetCountryName.append(", ${args.countryName}")
-           }
-           if(args.subadminArea?.isBlank() == true){
-               binding.tvBottomNavigationSheetSubadminArea.visibility = View.GONE
-           }
-           else{
-               binding.tvBottomNavigationSheetSubadminArea.text = args.subadminArea
-           }
-
-   */
-
         binding.btnBottomNavigationSheetPin.setOnClickListener {
             addLocationFragment.navigateToMainFragment()
             dismissNow()
         }
         binding.btnBottomNavigationSheetFavorite.setOnClickListener {
-            Log.i(TAG, "Favorite Tapped! ")
+            try{
+                weatherInfoViewModel.insertFavoriteLocation(addLocationFragment.getLatLng())
+
+            }catch (ex: SQLiteConstraintException){
+                Log.i(TAG, "constraint")
+            }
+            dismissNow()
         }
 
         binding.btnBottomNavigationSheetDismiss.setOnClickListener {
@@ -101,40 +86,4 @@ class BottomNavigationSheetFragment : BottomSheetDialogFragment() {
     fun setAddLocationFragment(addLocationFragment: AddLocationFragment){
         this.addLocationFragment = addLocationFragment
     }
-
-/*
-    fun getLocationInfo(countryName: String?, adminArea: String?, subAdminArea: String?, lat: Double?, lon: Double?,addLocationFragment: AddLocationFragment) {
-        this.addLocationFragment = addLocationFragment
-        displayAddress(countryName, adminArea, subAdminArea)
-    }
-
-    private fun displayAddress(countryName: String?, adminArea: String?, subAdminArea: String?){
-        if (adminArea?.isEmpty() == true || adminArea?.isBlank() == true || adminArea == "") {
-            if (countryName?.isEmpty() == true || countryName?.isBlank() == true || countryName == "") {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    tvCountryName.text = "Unknown"
-                    tvSubAdminArea.text = "Unknown"
-                }
-            } else {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    tvCountryName.text = countryName
-                }
-            }
-        } else if (adminArea?.isEmpty() == false) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                tvCountryName.text = adminArea
-                tvCountryName.append(", $countryName")
-            }
-        }
-        if (subAdminArea?.isBlank() == true || subAdminArea?.isEmpty() == true || subAdminArea == "") {
-            lifecycleScope.launch(Dispatchers.Main) {
-                tvSubAdminArea.text = "Unknown"
-            }
-        } else {
-            lifecycleScope.launch(Dispatchers.Main) {
-                tvSubAdminArea.text = subAdminArea
-            }
-        }
-    }*/
-
 }

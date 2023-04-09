@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/noNetworkFragment">
 
     <fragment
         android:id="@+id/mainFragment"
@@ -28,6 +28,10 @@
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/mainFragment" />
+        <argument
+            android:name="displayData"
+            app:argType="string"
+            android:defaultValue="N/A" />
     </fragment>
     <fragment
         android:id="@+id/addLocationFragment"
@@ -42,11 +46,27 @@
             app:destination="@id/mainFragment"
             app:popUpTo="@id/main_graph"
             app:popUpToInclusive="false" />
+        <argument
+            android:name="from"
+            app:argType="string"
+            android:defaultValue="N/A" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.example.weatherapp.ui.fragment.mainapp.FavoriteFragment"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_addLocationFragment"
+            app:destination="@id/addLocationFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            app:popUpTo="@id/favoriteFragment" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popUpTo="@id/main_graph" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.weatherapp.ui.fragment.mainapp.SettingsFragment"
@@ -75,6 +95,8 @@
         <action
             android:id="@+id/action_noLocationPermissionFragment_to_unableToFindALocationFragment2"
             app:destination="@id/unableToFindALocationFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:popUpTo="@id/noLocationPermissionFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -84,7 +106,9 @@
         tools:layout="@layout/fragment_unable_to_find_your_location">
         <action
             android:id="@+id/action_unableToFindALocationFragment_to_addLocationFragment"
-            app:destination="@id/addLocationFragment" />
+            app:destination="@id/addLocationFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <dialog
         android:id="@+id/bottomNavigationSheetFragment"
@@ -104,4 +128,17 @@
             app:argType="string"
             app:nullable="true" />
     </dialog>
+    <fragment
+        android:id="@+id/noNetworkFragment"
+        android:name="com.example.weatherapp.ui.fragment.mainapp.NoNetworkFragment"
+        tools:layout="@layout/fragment_no_network">
+        <action
+            android:id="@+id/action_noNetworkFragment_to_noLocationPermissionFragment"
+            app:destination="@id/noLocationPermissionFragment"
+            app:popUpTo="@id/main_graph" />
+        <action
+            android:id="@+id/action_noNetworkFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/main_graph" />
+    </fragment>
 </navigation>

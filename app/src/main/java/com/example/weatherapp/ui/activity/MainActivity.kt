@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.*
 import android.os.Bundle
-import android.os.StrictMode
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
@@ -21,8 +20,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.R
 import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
 import com.example.weatherapp.databinding.ActivityMainBinding
@@ -38,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationPermissionManager: LocationPermissionManager
 
     lateinit var mainActivityBinding: ActivityMainBinding
-    private val connectivityManager by lazy {
+    val connectivityManager by lazy {
         this.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
     }
 
@@ -52,17 +49,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val egLat: String by lazy{"24.0889"}
-    private val egLon: String by lazy{"32.8998"}
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Set the status bar to be transparent
         WindowCompat.setDecorFitsSystemWindows(window,true)
-
-        enableStrictMode()
 
         setupNetworkCheck()
         initMainActivityBinding()
@@ -70,9 +61,9 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
         navController = navHost.navController
 
-        // pop main fragment off the stack because NoLocationPermissionFragment navigates to it
+       /* // pop main fragment off the stack because NoLocationPermissionFragment navigates to it
         navController.popBackStack()
-        navController.navigate(R.id.noLocationPermissionFragment)
+        navController.navigate(R.id.noLocationPermissionFragment)*/
 
         setupLocationPermissionManager(mainActivityBinding.root)
 
@@ -80,31 +71,22 @@ class MainActivity : AppCompatActivity() {
 
 
         if (isConnected()){
-
+            if(settingsManager.isUserSettingsLocationSetToGps()){
+                navController.popBackStack()
+                navController.navigate(R.id.mainFragment)
+                navController.graph.setStartDestination(R.id.mainFragment)
+            }
+            else{
+                navController.popBackStack()
+                navController.navigate(R.id.noLocationPermissionFragment)
+                navController.graph.setStartDestination(R.id.noLocationPermissionFragment)
+            }
         }
         else{
-            startActivity(Intent(this,ErrorActivity::class.java))
-            finish()
+
         }
 
 
-    }
-
-
-    private fun enableStrictMode(){
-       if(BuildConfig.DEBUG){
-           val policy =
-               StrictMode.ThreadPolicy.Builder()
-                   .detectAll()
-                   .penaltyLog()
-                   .build()
-           StrictMode.setThreadPolicy(policy)
-       }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //TODO Close DB connection here
     }
 
     private fun setupLocationPermissionManager(view: View){
@@ -117,7 +99,6 @@ class MainActivity : AppCompatActivity() {
                 this::onGotoAppSettingsClick,
                 LOCATION_PERMISSION_GRANTED_REQUEST_CODE
             )
-       // locationPermissionManager.requestLocationPermission()
     }
 
     private fun onLocationPermissionGranted(){
@@ -128,7 +109,6 @@ class MainActivity : AppCompatActivity() {
     private fun onLocationPermissionDismissed(){
         // Do nothing and stay as you are in NoLocationPermissionFragment
         Toast.makeText(this, "NOT GRANTED", Toast.LENGTH_SHORT).show()
-      //  navController.navigate(R.id.noLocationPermissionFragment)
     }
 
     private fun onGotoAppSettingsClick(){
@@ -137,39 +117,6 @@ class MainActivity : AppCompatActivity() {
             Uri.fromParts("package",this.packageName,this.toString())
         )
         )
-    }
-
-
-
-
-
-
-   /* private fun fetchInitialData(){
-        // Run it on the UI thread because it's not possible to observe on a background thread.
-        runOnUiThread {
-            val weatherOneCallResponse = weatherInfoViewModel.weatherOneCall(egLat,egLon)
-            weatherOneCallResponse.observe(this, Observer {
-                mainActivityBinding.tvWeatherDegree.text = (it.currentWeatherDetailedInfo.temp - 273.15).toInt().toString() + "\u00B0"
-                // Set the selected weather to today's weather info so it can be displayed in the details fragment
-                mainActivityBinding.viewmodel?.setSelectedWeatherInfo(it.dailyForecast[0])
-                val calendar = Calendar.getInstance()
-                calendar.time = Date(it.twoDaysHourlyForecast[0].dt)
-                mainActivityBinding.viewmodel?.setSelectedListOfWeatherHourlyInfo(it.twoDaysHourlyForecast)
-            })
-        }
-    }*/
-
-    private fun onNetworkStatus(status: Boolean){
-        // onAvailable
-        if(status){
-        //    fetchInitialData()
-        }
-        // onLost
-        else{
-            startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
-            finish()
-        }
-
     }
 
     private fun setupNetworkCheck(){
@@ -189,32 +136,24 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                //Toast.makeText(this@MainActivity, "Available", Toast.LENGTH_SHORT).show() // works
-              //  Log.i(TAG, "onAvailable() AVAILABLE!")
-             //   fetchInitialData()
+                runOnUiThread {
+                    mainActivityBinding.navigationView.menu.findItem(R.id.addLocationFragment).isEnabled =
+                        true
+                }
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-               // Toast.makeText(this@MainActivity, "Lost Connection", Toast.LENGTH_SHORT).show() // works
-            //    Log.i(TAG, "onLost() LOST!!!!")
-                startActivity(Intent(this@MainActivity,ErrorActivity::class.java))
-                finish()
+                runOnUiThread {
+                    navController.popBackStack()
+                    navController.navigate(R.id.noNetworkFragment)
+                    navController.graph.setStartDestination(R.id.noNetworkFragment)
+                }
             }
 
         }
 
         connectivityManager.requestNetwork(networkRequest,networkCallback)
-
-
-        if(isConnected()){
-            Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
-        //    Log.i(TAG, "isConnected(): CONNECTED")
-        }
-        else{
-            Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
-          //  Log.i(TAG, "isConnected(): DISCONNECTED")
-        }
 
     }
     private fun isConnected() : Boolean{
@@ -225,37 +164,12 @@ class MainActivity : AppCompatActivity() {
         return connected
     }
 
-  /*  private fun loadCollapsingToolbarImage(){
-        Glide
-            .with(this)
-            .load(ResourcesCompat.getDrawable(resources, R.drawable.ice_snowy_landscape,theme))
-            .into(mainActivityBinding.ivCollapsingImage)
-    }*/
 
     private fun initMainActivityBinding(){
         mainActivityBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mainActivityBinding.lifecycleOwner = this
     }
 
-    /*
-    * Sets the custom toolbar as the Appbar along with its components
-    * */
-   /* private fun setupSupportActionBar(){
-        setSupportActionBar(mainActivityBinding.toolbar)
-        val supportActionBar = supportActionBar
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.round_menu_24)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }*/
-
-   /* private fun setUpTabLayoutFunctionality(){
-        mainActivityBinding.viewPager.adapter =
-            ViewPagerAdapter(supportFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-        mainActivityBinding.tabLayout.setupWithViewPager(mainActivityBinding.viewPager)
-
-    }*/
 
     /*
     * Handles the hamburger icon clicks
@@ -284,10 +198,6 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == LOCATION_PERMISSION_GRANTED_REQUEST_CODE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                // handled by NoLocationPermissionFragment
-                /*navController.popBackStack()
-                navController.navigate(R.id.mainFragment)*/
-
 
                 if(settingsManager.isUserSettingsLocationSetToGps()){
                     navController.popBackStack()

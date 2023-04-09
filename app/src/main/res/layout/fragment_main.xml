@@ -45,12 +45,14 @@
                             app:layout_collapseParallaxMultiplier="0.7" />
 
 
+                        <!--
+                        android:text="@{viewmodel.weatherOneCallResponse.currentWeatherDetailedInfo.component7().get(0).main}"
+                        -->
                         <TextView
                             android:id="@+id/tv_weather_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/noto_sans_sc_bold"
-                            android:text="@{viewmodel.weatherOneCallResponse.currentWeatherDetailedInfo.component7().get(0).main}"
                             android:textSize="32sp"
                             android:textColor="@color/white_97_brightness"
                             android:includeFontPadding="false"

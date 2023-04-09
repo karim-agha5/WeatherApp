@@ -37,7 +37,8 @@ class HourlyForecastAdapter(val settingsManager: SettingsManager)
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.hourlyForecastItemBinding.imageUrl =
             getWeatherIconUrl(getItem(position).weatherList[0].icon)
-        val degree = (((getItem(position).temp - 273.15) * 10).toInt()) / 10.0
+       // val degree = (((getItem(position).temp - 273.15) * 10).toInt()) / 10.0
+        val degree = getItem(position).temp.toDouble()
         convertData(degree)
         holder.hourlyForecastItemBinding.tvHourlyWeatherDegree.text =
             getDegreeFormat(weatherTemp)

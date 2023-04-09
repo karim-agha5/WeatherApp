@@ -1,27 +1,31 @@
 package com.example.weatherapp.ui.fragment.mainapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.weatherapp.R
+import com.example.weatherapp.data.source.local.sharedpreference.SettingsManager
+import com.example.weatherapp.data.source.remote.response.dataclass.Main
 import com.example.weatherapp.ui.activity.MainActivity
-import com.example.weatherapp.util.TAG
 
-class UnableToFindALocationFragment : Fragment() {
+class NoNetworkFragment : Fragment() {
 
+    private lateinit var btnRetry: Button
     private lateinit var toolbar: Toolbar
-    private lateinit var btnOpenUpTheMap: Button
+    private val settingsManager by lazy {
+        SettingsManager.getInstance(requireContext().applicationContext)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -29,25 +33,46 @@ class UnableToFindALocationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_unable_to_find_your_location, container, false)
+        return inflater.inflate(R.layout.fragment_no_network, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar = view.findViewById(R.id.unable_to_find_a_location_toolbar)
+        toolbar = view.findViewById(R.id.no_network_toolbar)
+        btnRetry = view.findViewById(R.id.btn_no_internet_retry)
         setupNavigationConfig()
-        btnOpenUpTheMap = view.findViewById(R.id.btn_open_up_the_map)
-        btnOpenUpTheMap.setOnClickListener {
-           // findNavController().navigate(R.id.addLocationFragment)
-            findNavController().navigate(R.id.action_unableToFindALocationFragment_to_addLocationFragment)
+        if(!isConnected()){
+            (requireActivity() as MainActivity)
+                .mainActivityBinding
+                .navigationView
+                .menu
+                .findItem(R.id.addLocationFragment)
+                .isEnabled = false
         }
-       /* findNavController()
-            .currentBackStackEntry
-            ?.savedStateHandle
-            ?.getLiveData<String>("key")
-            ?.observe(viewLifecycleOwner){
-                Log.i(TAG, "${this@UnableToFindALocationFragment.javaClass.simpleName} : $it")
-            }*/
+
+        btnRetry.setOnClickListener {
+            if(isConnected()){
+                if(settingsManager.isUserSettingsLocationSetToGps()){
+                    findNavController().navigate(R.id.action_noNetworkFragment_to_mainFragment)
+                    findNavController().graph.setStartDestination(R.id.mainFragment)
+                }
+                else{
+                    findNavController().navigate(R.id.action_noNetworkFragment_to_noLocationPermissionFragment)
+                    findNavController().graph.setStartDestination(R.id.noLocationPermissionFragment)
+                }
+            }
+            else{
+                Toast.makeText(requireActivity(), "Not Connected", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun isConnected() : Boolean{
+        var connected = false
+        val info = (requireActivity() as MainActivity).connectivityManager.activeNetworkInfo
+        connected = info != null && info.isAvailable && info.isConnected
+
+        return connected
     }
 
     private fun setupNavigationConfig(){
@@ -70,4 +95,5 @@ class UnableToFindALocationFragment : Fragment() {
         (activity as MainActivity).mainActivityBinding.navigationView.setupWithNavController(findNavController())
 
     }
+
 }
