@@ -6,8 +6,8 @@ An Android application that helps you find weather forecasts in your area or any
 
 ## Installation
 
-Either clone the project or download the APK.
-The minimum SDK version is 26 (Oreo)
+Either clone the project or download the APK.<br>
+The minimum SDK version is 26 (Oreo).
 
 
 ## How to use
