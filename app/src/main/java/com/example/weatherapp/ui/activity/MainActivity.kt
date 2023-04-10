@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
@@ -71,15 +72,30 @@ class MainActivity : AppCompatActivity() {
 
 
         if (isConnected()){
-            if(settingsManager.isUserSettingsLocationSetToGps()){
-                navController.popBackStack()
-                navController.navigate(R.id.mainFragment)
-                navController.graph.setStartDestination(R.id.mainFragment)
-            }
-            else{
-                navController.popBackStack()
-                navController.navigate(R.id.noLocationPermissionFragment)
-                navController.graph.setStartDestination(R.id.noLocationPermissionFragment)
+            navController.popBackStack()
+            navController.navigate(R.id.noLocationPermissionFragment)
+
+
+            if(
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ){
+
+                if(settingsManager.isUserSettingsLocationSetToGps()){
+                    navController.popBackStack()
+                    navController.navigate(R.id.mainFragment)
+                    navController.graph.setStartDestination(R.id.mainFragment)
+                }
+                else{
+                    navController.popBackStack()
+                    navController.navigate(R.id.unableToFindALocationFragment)
+                    navController.graph.setStartDestination(R.id.unableToFindALocationFragment)
+                }
+
+
+
             }
         }
         else{

@@ -65,6 +65,7 @@ dependencies {
     // Room
     implementation "androidx.room:room-runtime:2.5.1"
     implementation "androidx.room:room-ktx:2.5.1"
+    implementation 'androidx.test:monitor:1.6.1'
     kapt "androidx.room:room-compiler:2.5.1"
 
 
@@ -91,4 +92,16 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // AndroidX and Robolectric
+    testImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
+    testImplementation "androidx.test:core-ktx:$androidXTestCoreVersion"
+    testImplementation "org.robolectric:robolectric:4.8"
+
+    testImplementation"org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+
+
+    // InstantTaskExecutorRule
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    
 }
