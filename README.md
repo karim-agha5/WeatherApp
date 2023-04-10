@@ -17,3 +17,12 @@ Either clone the project or download the APK.
 4 - Find detailed weekly and hourly forecasts<br/>
 5 - Save certain locations weather forecasts<br/>
 6 - Add Alarms for whatever time you'd like
+
+
+### Todo
+
+- Clean up the navigation
+- Imrpove visuals
+- Add alerts list
+- Fix alerts sounds
+- Add Arabic language support
