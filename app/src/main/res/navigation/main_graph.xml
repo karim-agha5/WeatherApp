@@ -141,4 +141,7 @@
             app:destination="@id/mainFragment"
             app:popUpTo="@id/main_graph" />
     </fragment>
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.example.weatherapp.ui.fragment.mainapp.AlertsFragment" />
 </navigation>
